@@ -13,13 +13,14 @@ FILE(GLOB CommonSources
 
 FILE(GLOB StatsSources
         include/Stats.h
-        include/SystemStats.h src/SystemStats.cpp )
+        include/SystemStats.h src/SystemStats.cpp
+        src/DiskStats.cpp include/DiskStats.h)
 
 
-add_executable(px-org-remote-status-service src/main.cpp ${CommonSources} ${StatsSources} test/Test_Stat.cpp)
+add_executable(px-org-remote-status-service src/main.cpp ${CommonSources} ${StatsSources} )
 #target_link_libraries(px-org-remote-status-service SQLiteCpp sqlite3 )
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
-add_executable(Test_Stat test/Test_Stat.cpp ${CommonSources} ${StatsSources} test/Test_Stat.cpp)
+add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} test/Test_Stats.cpp)
 #target_link_libraries(px-org-remote-status-service SQLiteCpp sqlite3 )
 install(TARGETS Test_Stat DESTINATION bin)

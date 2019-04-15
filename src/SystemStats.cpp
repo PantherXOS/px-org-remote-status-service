@@ -2,8 +2,7 @@
 // Created by fakhri on 4/14/19.
 //
 
-#include <sstream>
-#include <vector>
+
 #include "SystemStats.h"
 
 string SystemStats::monitStatusGetValue(string status, string key) {
@@ -36,5 +35,3 @@ map<string,string> SystemStats::get() {
     string result = UTILS::COMMAND::Execute("monit status");
     return monitStatusParser(result);
 }
-
-

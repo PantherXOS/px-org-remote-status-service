@@ -8,6 +8,7 @@
 #include "Utils.h"
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 class SystemStats : public Stats {
 public:
