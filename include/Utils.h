@@ -9,14 +9,52 @@ using namespace std;
 #include <string>
 #include <array>
 #include <bits/unique_ptr.h>
+#include <cstdio>
+#include <cstring>
+#include <sys/stat.h>
+#include <wordexp.h>
+#include <dirent.h>
+#include <stdarg.h>
+
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <map>
+#include <vector>
 
 
 namespace UTILS {
 
     namespace COMMAND {
-
         string Execute(const char* cmd);
     }
+
+    namespace PXFILE
+    {
+        string abspath(const string &path);
+
+        string basedir(const string &path);
+
+        string filename(const string &path);
+
+        vector<string> dirfiles(const string &path, string ext);
+
+        string extpart(const string &fname);
+
+        bool exists(const string &path);
+
+        bool remove(const string &path);
+
+        bool write(const string &path, const string &data);
+    }
+
+    namespace PATH
+    {
+        bool isunix(const string &path);
+
+        string unix2path(const string &upath);
+    }
+
 }
 
 

@@ -21,13 +21,17 @@ include_directories(${CapnProto_INCLUDE_DIRS})
 FILE(GLOB CommonSources
         src/Utils.cpp  include/Utils.h)
 
+FILE(GLOB RPCSources
+        src/RPCServer.cpp include/RPCServer.h
+        src/RPCHandler.cpp include/RPCHandler.h)
+
 FILE(GLOB StatsSources
         include/Stats.h
         include/SystemStats.h src/SystemStats.cpp
         src/DiskStats.cpp include/DiskStats.h)
 
 
-add_executable(px-org-remote-status-service src/main.cpp ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders})
+add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders})
 target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
