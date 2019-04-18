@@ -7,14 +7,14 @@
 #include <sstream>
 #include <SystemStats.h>
 #include "DiskStats.h"
+#include "RPCServer.h"
 
 using namespace std;
 
 int main(){
-    DiskStats diskStats;
-    map<string,string> disktatResult =  diskStats.get();
-    for ( const auto &p : disktatResult )
-    {
-        std::cout << p.first << '\t' << p.second << std::endl;
-    }
+   RPCServer rpcServer;
+   rpcServer.start();
+   while(1);
+
+
 }

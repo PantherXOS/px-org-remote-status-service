@@ -37,8 +37,7 @@ install(TARGETS px-org-remote-status-service DESTINATION bin)
 
 add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} test/Test_Stats.cpp)
 #target_link_libraries(px-org-remote-status-service SQLiteCpp sqlite3 )
-install(TARGETS Test_Stat DESTINATION bin)
 
-add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders})
+add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders} ${CommonSources})
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)

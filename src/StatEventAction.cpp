@@ -3,6 +3,7 @@
 #include <ctime>
 #include <capnp/ez-rpc.h>
 #include "StatEvent.capnp.h"
+#include "Utils.h"
 
 #include "CLI11.hpp"
 
@@ -13,7 +14,10 @@ using namespace std;
 class StateEventAction{
 public:
     void sendEvent(string topic,string event){
-        capnp::EzRpcClient rpcClient(SERVER_ADDRESS);
+
+        string addr = string("unix:") + UTILS::PXFILE::abspath(SERVER_ADDRESS);
+        capnp::EzRpcClient rpcClient(addr);
+
         auto &waitScope = rpcClient.getWaitScope();
         Event::Client client = rpcClient.getMain<Event>();
         auto emitReq = client.emitRequest();

@@ -15,6 +15,7 @@ kj::Promise<void> RPCHandler::emit(Event::Server::EmitContext ctx) {
     auto time  = eventData.getTime();
     cout << topic.cStr() << endl;
     cout << event.cStr() << endl;
+    //TODO add todata base
 
     return kj::READY_NOW;
 }

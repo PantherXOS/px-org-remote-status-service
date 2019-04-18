@@ -11,15 +11,14 @@
 
 using namespace std;
 
-#define RPC_PATH          "~/.system/rpc/remote-status-service"
-#define RPC_SOCKET_PATH   RPC_PATH "/hub"
+#define RPC_PATH          "~/.system/rpc"
+#define RPC_SOCKET_PATH   RPC_PATH "/remote-status-service"
 #define RPC_MKDIR_CMD     "mkdir -p " RPC_PATH
 
 
 RPCServer::RPCServer(const std::string &addr) {
     this->address = addr;
     if (addr.empty()) {
-
         system(RPC_MKDIR_CMD);
         string rpcPath =  UTILS::PXFILE::abspath(RPC_SOCKET_PATH);
         if (UTILS::PXFILE::exists(rpcPath)) {
