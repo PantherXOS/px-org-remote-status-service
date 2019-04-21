@@ -8,12 +8,19 @@
 #include <SystemStats.h>
 #include "DiskStats.h"
 #include "RPCServer.h"
+#include "ApiHandler.h"
 
 using namespace std;
 
 int main(){
    RPCServer rpcServer;
    rpcServer.start();
+//    ApiHandler apiHandler;
+//
+//    apiHandler.init(2);
+//    apiHandler.start();
+
+    //apiHandler.shutdown();
    while(1);
 
 

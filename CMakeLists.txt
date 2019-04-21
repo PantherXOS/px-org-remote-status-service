@@ -15,11 +15,14 @@ capnp_generate_cpp(CapnpSources CapnpHeaders
         interface/StatEvent.capnp)
 
 include_directories(${CapnProto_INCLUDE_DIRS})
+include_directories(SQLiteCpp/include)
 
-#add_subdirectory(SQLiteCpp)
+
+add_subdirectory(SQLiteCpp)
 
 FILE(GLOB CommonSources
-        src/Utils.cpp  include/Utils.h)
+        src/Utils.cpp  include/Utils.h
+        src/StatsParam.cpp include/StatsParam.h)
 
 FILE(GLOB RPCSources
         src/RPCServer.cpp include/RPCServer.h
@@ -30,9 +33,15 @@ FILE(GLOB StatsSources
         include/SystemStats.h src/SystemStats.cpp
         src/DiskStats.cpp include/DiskStats.h)
 
+FILE(GLOB ApiSources
+        src/ApiHandler.cpp include/ApiHandler.h )
 
-add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders})
-target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc)
+FILE(GLOB DBSources
+        include/StatusDatabase.h)
+
+
+add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} src/StatusDatabase.cpp)
+target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
 add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} test/Test_Stats.cpp)
