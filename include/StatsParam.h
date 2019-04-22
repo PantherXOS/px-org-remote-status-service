@@ -23,6 +23,16 @@ public:
 
     void setStatsParam(string system, float cpuUser,float cpuWait,float cpuSystem,float memoryUsage,float memoryUsed, int upTime,int bootTime);
 
+    //getters
+    string getSystem();
+    int getBootTime();
+    int getUpTime();
+    float getCpuUser();
+    float getCpuWait();
+    float getCpuSystem();
+    float getMemoryUsage();
+    float getMemoryUsed();
+
 
 private:
     string system;

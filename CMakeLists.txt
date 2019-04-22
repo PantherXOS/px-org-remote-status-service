@@ -34,14 +34,13 @@ FILE(GLOB StatsSources
         src/DiskStats.cpp include/DiskStats.h)
 
 FILE(GLOB ApiSources
-        src/ApiHandler.cpp include/ApiHandler.h )
+        src/RESTserver.cpp include/RESTserver.h)
 
 FILE(GLOB DBSources
-        include/StatusDatabase.h)
+        include/StatusDatabase.h src/StatusDatabase.cpp)
 
-
-add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} src/StatusDatabase.cpp)
-target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3)
+add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources})
+target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
 add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} test/Test_Stats.cpp)
@@ -50,3 +49,12 @@ add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} te
 add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders} ${CommonSources})
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
+
+
+add_executable(Test_Rest_Api ${ApiSources} test/Test_RestApi.cpp)
+set(PISTACHE_INCLUDE_DIR "libs/pistache/include")
+set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${PISTACHE_INCLUDE_DIR})
+set(PISTACHE_LIBRARY "libpistache.a")
+set(LIBRARIES_SEARCH_PATHS ${PISTACHE_LIBRARY} )
+include_directories(${HEADER_SEARCH_PATHS})
+target_link_libraries(Test_Rest_Api ${LIBRARIES_SEARCH_PATHS})

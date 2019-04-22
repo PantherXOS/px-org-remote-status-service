@@ -52,3 +52,35 @@ void StatsParam::setSystem(string system) {
     this->system = system;
 
 }
+
+string StatsParam::getSystem() {
+    return this->system;
+}
+
+int StatsParam::getBootTime() {
+    return this->bootTime;
+}
+
+int StatsParam::getUpTime() {
+    return this->upTime;
+}
+
+float StatsParam::getCpuUser() {
+    return this->cpuUser;
+}
+
+float StatsParam::getCpuWait() {
+    return this->cpuWait;
+}
+
+float StatsParam::getCpuSystem() {
+    return this->cpuSystem;
+}
+
+float StatsParam::getMemoryUsage() {
+    return this->memoryUsage;
+}
+
+float StatsParam::getMemoryUsed() {
+    return this->memoryUsed;
+}

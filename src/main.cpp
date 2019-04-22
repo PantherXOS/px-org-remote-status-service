@@ -8,7 +8,6 @@
 #include <SystemStats.h>
 #include "DiskStats.h"
 #include "RPCServer.h"
-#include "ApiHandler.h"
 
 using namespace std;
 

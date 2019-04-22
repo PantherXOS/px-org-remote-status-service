@@ -14,6 +14,11 @@ bool StatusDatabase::readStats( StatsParam &resultStats) {
             resultStats.setBootTime(query.getColumn("bootTime"));
             resultStats.setSystem(query.getColumn("system"));
             resultStats.setCpuSystem(query.getColumn("cpuSystem").getDouble());
+            resultStats.setCpuUser(query.getColumn("cpuUser").getDouble());
+            resultStats.setCpuWait(query.getColumn("cpuWait").getDouble());
+            resultStats.setMemoryUsage(query.getColumn("memoryUsage").getDouble());
+            resultStats.setMemoryUsed(query.getColumn("memoryUsed").getDouble());
+            resultStats.setUptime(query.getColumn("upTime"));
         }
         // Reset the query to use it again
         query.reset();
@@ -24,25 +29,24 @@ bool StatusDatabase::readStats( StatsParam &resultStats) {
     }
     return hasResult;
 }
-
 int StatusDatabase::insertStats(StatsParam stats) {
     try {
-        int res = this->mDb.exec("INSERT INTO account VALUES (NULL,\""+
-                                 to_string(account.time) + "\",\""+
-                                 account.type + "\",\""+
-                                 account.icon + "\",\""+
-                                 account.link + "\",\""+
-                                 account.altLink + "\",\""+
-                                 account.title + "\",\""+
-                                 to_string(account.unread) + "\",\""+
-                                 to_string(account.status) + "\")");
+        int res = this->mDb.exec("INSERT INTO stats VALUES (NULL,\""+
+                                 stats.getSystem() + "\",\""+
+                                 to_string(stats.getBootTime())+ "\",\""+
+                                 to_string(stats.getCpuUser()) + "\",\""+
+                                 to_string(stats.getCpuSystem()) + "\",\""+
+                                 to_string(stats.getCpuWait()) + "\",\""+
+                                 to_string(stats.getMemoryUsed()) + "\",\""+
+                                 to_string(stats.getMemoryUsage()) + "\",\""+
+                                 to_string(stats.getUpTime()) + "\")");
         if(res == 0)
             return -2;
-        SQLite::Statement query(mDb, "SELECT id FROM account ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, "SELECT id FROM stats ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
             if(id>0)
-                this->mDb.exec("DELETE FROM account WHERE id="+to_string(id));
+                this->mDb.exec("DELETE FROM stats WHERE id="+to_string(id));
         }
         query.reset();
     }
