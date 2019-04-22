@@ -64,3 +64,7 @@ StatusDatabase & StatusDatabase::instance() {
     return instance;
 }
 
+bool StatusDatabase::readGeneralStats(GeneralDBParam &resultGeneralStats) {
+    return false;
+}
+

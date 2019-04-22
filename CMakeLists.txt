@@ -22,6 +22,10 @@ add_subdirectory(SQLiteCpp)
 
 FILE(GLOB CommonSources
         src/Utils.cpp  include/Utils.h
+        src/CpuDBParam.cpp include/CpuDBParam.h
+        src/MemoryDBParam.cpp include/MemoryDBParam.h
+        src/DiskDBParam.cpp include/DiskDBParam.h
+        src/GeneralDBParam.cpp include/GeneralDBParam.h
         src/StatsParam.cpp include/StatsParam.h)
 
 FILE(GLOB RPCSources

@@ -15,6 +15,10 @@
 #include <vector>
 #include <sys/stat.h>
 #include "StatsParam.h"
+#include "GeneralDBParam.h"
+#include "CpuDBParam.h"
+#include "MemoryDBParam.h"
+#include "DiskDBParam.h"
 
 #define MAX_TABLE_RECORD 500
 
@@ -34,6 +38,18 @@ public:
     bool readStats(StatsParam &resultStats);
     int insertStats(StatsParam stats);
 
+    bool readGeneralStats(GeneralDBParam &resultGeneralStats);
+    int insertGeneralStats(GeneralDBParam generalStats);
+
+    bool readCpuStats(CpuDBParam &resultCpuStats);
+    int insertCpuStats(CpuDBParam cpuStats);
+
+    bool readMemoryStats(MemoryDBParam &resultMemoryStats);
+    int inserMemorytStats(MemoryDBParam memoryStats);
+
+    bool readDiskStats(DiskDBParam &resultDiskStats);
+    int inserMemorytStats(DiskDBParam diskStats);
+
 
    // bool isExistContact(string type,string value);
 
@@ -43,7 +59,15 @@ private:
     {
         try {
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY,system TEXT,bootTime INTEGER,cpuUser REAL,cpuSystem REAL,cpuWait REAL, memoryUsed REAL,memoryUsage REAL,upTime INTEGER)");
+                    "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER)");
+            mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,User REAL,System REAL,Wait REAL)");
+            mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL)");
+            mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS swap (id INTEGER PRIMARY KEY, swapUsed REAL,swapUsage REAL)");
+            mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL)");
             }
         catch (std::exception& e)
         {
