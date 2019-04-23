@@ -38,30 +38,30 @@ FILE(GLOB StatsSources
         src/DiskStats.cpp include/DiskStats.h)
 
 FILE(GLOB ApiSources
-        src/RESTserver.cpp include/RESTserver.h)
+        src/RESTclient.cpp include/RESTclient.h)
 
 FILE(GLOB DBSources
         include/StatusDatabase.h src/StatusDatabase.cpp)
 
-add_executable(px-org-remote-status-service src/main.cpp ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources})
-target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl)
+add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources})
+set(PROJECT_INCLUDE_DIR "src/include")
+set(RESTCLIENTCPP_INCLUDE_DIR "libs/restclient-cpp/include")
+set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
+set(RESTCLIENT_LIBRARY "librestclient-cpp.a")
+set(LIBRARIES_SEARCH_PATHS ${RESTCLIENT_LIBRARY} )
+include_directories(${HEADER_SEARCH_PATHS})
+target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl ${LIBRARIES_SEARCH_PATHS} curl pthread)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
 add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} test/Test_Stats.cpp)
-#target_link_libraries(px-org-remote-status-service SQLiteCpp sqlite3 )
 
 add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders} ${CommonSources})
+
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
 add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources})
 target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl)
-install(TARGETS Test_DB DESTINATION bin)
 
-add_executable(Test_Rest_Api ${ApiSources} test/Test_RestApi.cpp )
-set(PISTACHE_INCLUDE_DIR "libs/pistache/include")
-set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${PISTACHE_INCLUDE_DIR})
-set(PISTACHE_LIBRARY "libpistache.a")
-set(LIBRARIES_SEARCH_PATHS ${PISTACHE_LIBRARY} )
-include_directories(${HEADER_SEARCH_PATHS})
-target_link_libraries(Test_Rest_Api ${LIBRARIES_SEARCH_PATHS})
+add_executable(Test_RestClient test/Test_RestClient.cpp ${ApiSources})
+target_link_libraries(Test_RestClient ${LIBRARIES_SEARCH_PATHS} pthread curl)
