@@ -22,10 +22,10 @@ add_subdirectory(SQLiteCpp)
 
 FILE(GLOB CommonSources
         src/Utils.cpp  include/Utils.h
-        src/CpuDBParam.cpp include/CpuDBParam.h
-        src/MemoryDBParam.cpp include/MemoryDBParam.h
-        src/DiskDBParam.cpp include/DiskDBParam.h
-        src/GeneralDBParam.cpp include/GeneralDBParam.h
+        src/CpuParams.cpp include/CpuParams.h
+        src/MemoryParams.cpp include/MemoryParams.h
+        src/DiskParams.cpp include/DiskParams.h
+        src/GeneralParams.cpp include/GeneralParams.h
         src/StatsParam.cpp include/StatsParam.h)
 
 FILE(GLOB RPCSources
@@ -54,8 +54,11 @@ add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
+add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources})
+target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl)
+install(TARGETS Test_DB DESTINATION bin)
 
-add_executable(Test_Rest_Api ${ApiSources} test/Test_RestApi.cpp)
+add_executable(Test_Rest_Api ${ApiSources} test/Test_RestApi.cpp )
 set(PISTACHE_INCLUDE_DIR "libs/pistache/include")
 set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${PISTACHE_INCLUDE_DIR})
 set(PISTACHE_LIBRARY "libpistache.a")

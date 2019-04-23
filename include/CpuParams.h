@@ -2,11 +2,13 @@
 // Created by Fakhri on 4/22/19.
 //
 
-#ifndef PX_ORG_REMOTE_STATUS_SERVICE_CPUDBPARAM_H
-#define PX_ORG_REMOTE_STATUS_SERVICE_CPUDBPARAM_H
+#ifndef PX_ORG_REMOTE_STATUS_SERVICE_CPUPARAMS_H
+#define PX_ORG_REMOTE_STATUS_SERVICE_CPUPARAMS_H
+using namespace std;
 
+#include <string>
 
-class CpuDBParam {
+class CpuParams {
 public:
     void setUser(float user);
     void setSystem(float system);
@@ -16,10 +18,12 @@ public:
     float getSystem();
     float getWait();
 
+    string toString();
+
 private:
     float user,system,wait;
 
 };
 
 
-#endif //PX_ORG_REMOTE_STATUS_SERVICE_CPUDBPARAM_H
+#endif //PX_ORG_REMOTE_STATUS_SERVICE_CPUPARAMS_H

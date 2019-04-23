@@ -1,13 +1,13 @@
 //
-// Created by root on 4/22/19.
+// Created by Fakhri on 4/22/19.
 //
 
-#ifndef PX_ORG_REMOTE_STATUS_SERVICE_DISKDBPARAM_H
-#define PX_ORG_REMOTE_STATUS_SERVICE_DISKDBPARAM_H
+#ifndef PX_ORG_REMOTE_STATUS_SERVICE_DISKPARAMS_H
+#define PX_ORG_REMOTE_STATUS_SERVICE_DISKPARAMS_H
 using namespace std;
 #include <string>
 
-class DiskDBParam {
+class DiskParams {
 public:
     void setName(string name);
     void setFree(float free);
@@ -20,6 +20,9 @@ public:
     float getTotal();
     float getUsed();
     float getUsage();
+
+    string toString();
+
 private:
     string name;
    float free,total,used,usage;
@@ -27,4 +30,4 @@ private:
 };
 
 
-#endif //PX_ORG_REMOTE_STATUS_SERVICE_DISKDBPARAM_H
+#endif //PX_ORG_REMOTE_STATUS_SERVICE_DISKPARAMS_H

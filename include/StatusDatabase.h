@@ -15,10 +15,10 @@
 #include <vector>
 #include <sys/stat.h>
 #include "StatsParam.h"
-#include "GeneralDBParam.h"
-#include "CpuDBParam.h"
-#include "MemoryDBParam.h"
-#include "DiskDBParam.h"
+#include "GeneralParams.h"
+#include "CpuParams.h"
+#include "MemoryParams.h"
+#include "DiskParams.h"
 
 #define MAX_TABLE_RECORD 500
 
@@ -35,23 +35,21 @@ public:
 
    static StatusDatabase & instance(void);
 
-    bool readStats(StatsParam &resultStats);
-    int insertStats(StatsParam stats);
+    bool readGeneralStats(GeneralParams &resultGeneralStats);
+    int insertGeneralStats(GeneralParams generalStats);
 
-    bool readGeneralStats(GeneralDBParam &resultGeneralStats);
-    int insertGeneralStats(GeneralDBParam generalStats);
+    bool readCpuStats(CpuParams &resultCpuStats);
+    int insertCpuStats(CpuParams cpuStats);
 
-    bool readCpuStats(CpuDBParam &resultCpuStats);
-    int insertCpuStats(CpuDBParam cpuStats);
+    bool readMemoryStats(MemoryParams &resultMemoryStats);
+    int inserMemorytStats(MemoryParams memoryStats);
 
-    bool readMemoryStats(MemoryDBParam &resultMemoryStats);
-    int inserMemorytStats(MemoryDBParam memoryStats);
+    bool readDiskStats(DiskParams &resultDiskStats);
+    int inserDiskStats(DiskParams diskStats);
 
-    bool readDiskStats(DiskDBParam &resultDiskStats);
-    int inserMemorytStats(DiskDBParam diskStats);
+    bool readSwapStats(MemoryParams &resultSwapStats);
+    int insertSwaptStats(MemoryParams swapStats);
 
-
-   // bool isExistContact(string type,string value);
 
 private:
     StatusDatabase() :
@@ -61,7 +59,7 @@ private:
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,User REAL,System REAL,Wait REAL)");
+                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL)");
             mDb.exec(
