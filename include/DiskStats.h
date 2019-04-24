@@ -12,11 +12,11 @@ using namespace std;
 #include <vector>
 #include <sstream>
 
-class DiskStats :  Stats {
+class DiskStats  {
 public:
-    map<string,string> get();
+   // StatsParam get();
 private:
-    map<string,string> diskStatusParser(string status);
+   // map<string,string> diskStatusParser(string status);
 
 };
 

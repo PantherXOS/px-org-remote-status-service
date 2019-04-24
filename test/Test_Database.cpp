@@ -3,6 +3,7 @@
 //
 
 #include "StatusDatabase.h"
+#include "JsonBuilder.h"
 
 int main(){
 
@@ -25,9 +26,10 @@ int main(){
     cpuParams.setUser(5.5);
     cpuParams.setWait(100);
 
-    StatusDatabase::instance().insertCpuStats(cpuParams);
-    StatusDatabase::instance().readCpuStats(cpuResult);
-
+    StatusDatabase::instance().insertCpuStats(cpuParams, 0);
+    StatusDatabase::instance().readCpuStats(cpuResult, 0);
+    JsonBuilder jsonBuilder;
+    jsonBuilder.cpupart(cpuParams);
     cout<<"---------------- CPU table r/w test ----------------"<<endl;
     cout<<cpuResult.toString()<<endl;
 
@@ -35,8 +37,8 @@ int main(){
     MemoryParams memoryParams,memoryResult;
     memoryParams.setUsage(45);
     memoryParams.setUsed(55.9);
-    StatusDatabase::instance().inserMemorytStats(memoryParams);
-    StatusDatabase::instance().readMemoryStats(memoryResult);
+    StatusDatabase::instance().inserMemorytStats(memoryParams, 0);
+    StatusDatabase::instance().readMemoryStats(memoryResult, 0);
     cout<<"---------------- Memory table r/w test ----------------"<<endl;
     cout<<memoryParams.toString()<<endl;
 
@@ -44,8 +46,8 @@ int main(){
     MemoryParams swapParams,swapResult;
     swapParams.setUsage(555);
     swapParams.setUsed(88.9);
-    StatusDatabase::instance().insertSwaptStats(swapParams);
-    StatusDatabase::instance().readSwapStats(swapResult);
+    StatusDatabase::instance().insertSwaptStats(swapParams, 2);
+    StatusDatabase::instance().readSwapStats(swapResult, 2);
     cout<<"---------------- Swap table r/w test ----------------"<<endl;
     cout<<swapResult.toString()<<endl;
 
@@ -57,8 +59,8 @@ int main(){
     diskParams.setFree(20);
     diskParams.setName("sda1");
 
-    StatusDatabase::instance().inserDiskStats(diskParams);
-    StatusDatabase::instance().readDiskStats(diskResult);
+    StatusDatabase::instance().inserDiskStats(diskParams, 1);
+    StatusDatabase::instance().readDiskStats(diskResult, 1);
     cout<<"---------------- Disk table r/w test ----------------"<<endl;
     cout<<diskResult.toString()<<endl;
 

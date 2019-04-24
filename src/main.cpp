@@ -5,22 +5,26 @@
 #include <array>
 #include <bits/unique_ptr.h>
 #include <sstream>
-#include <SystemStats.h>
+#include <StatusDatabase.h>
+#include "SystemStats.h"
 #include "DiskStats.h"
 #include "RPCServer.h"
+#include "StatsParam.h"
+#include "JsonBuilder.h"
 
 using namespace std;
 
 int main(){
    RPCServer rpcServer;
    rpcServer.start();
-//    ApiHandler apiHandler;
-//
-//    apiHandler.init(2);
-//    apiHandler.start();
+    StatsParam statsParam;
+    SystemStats sysStat;
 
-    //apiHandler.shutdown();
-   while(1);
+   while(true){
+      statsParam = sysStat.get();
+       StatusDatabase::instance().insertGeneralStats(statsParam.generalParams);
+      sleep(50);
+   };
 
 
 }

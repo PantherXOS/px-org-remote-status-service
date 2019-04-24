@@ -7,9 +7,10 @@
 using namespace std;
 
 #include <map>
+#include "StatsParam.h"
 
 class Stats {
-    virtual map<string,string> get() = 0;
+    virtual StatsParam get() = 0;
 
 };
 

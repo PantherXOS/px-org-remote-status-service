@@ -57,11 +57,11 @@ int StatusDatabase::insertGeneralStats(GeneralParams generalStats) {
     return 0;
 }
 
-bool StatusDatabase::readCpuStats(CpuParams &resultCpuStats) {
+bool StatusDatabase::readCpuStats(CpuParams &resultCpuStats, int gid) {
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM cpu ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM cpu WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             hasResult = true;
             resultCpuStats.setSystem(query.getColumn("system").getDouble());
@@ -78,12 +78,13 @@ bool StatusDatabase::readCpuStats(CpuParams &resultCpuStats) {
     return hasResult;
 }
 
-int StatusDatabase::insertCpuStats(CpuParams cpuStats) {
+int StatusDatabase::insertCpuStats(CpuParams cpuStats, int gid) {
     try {
-        int res = this->mDb.exec("INSERT INTO cpu VALUES (NULL,\""+
-                                 to_string(cpuStats.getUser())+ "\",\""+
-                                 to_string(cpuStats.getSystem())+ "\",\""+
-                                 to_string(cpuStats.getWait()) + "\")");
+        int res = this->mDb.exec("INSERT INTO cpu VALUES (NULL,"+
+                                 to_string(cpuStats.getUser())+ ","+
+                                 to_string(cpuStats.getSystem())+ ","+
+                                 to_string(cpuStats.getWait()) + ","+
+                                 to_string(gid) + ")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM cpu ORDER BY id DESC  LIMIT 1");
@@ -102,11 +103,11 @@ int StatusDatabase::insertCpuStats(CpuParams cpuStats) {
     return 0;
 }
 
-bool StatusDatabase::readMemoryStats(MemoryParams &resultMemoryStats) {
+bool StatusDatabase::readMemoryStats(MemoryParams &resultMemoryStats, int gid) {
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM memory ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM memory WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             hasResult = true;
             resultMemoryStats.setUsed(query.getColumn("memoryUsed").getDouble());
@@ -122,11 +123,12 @@ bool StatusDatabase::readMemoryStats(MemoryParams &resultMemoryStats) {
     return hasResult;
 }
 
-int StatusDatabase::inserMemorytStats(MemoryParams memoryStats) {
+int StatusDatabase::inserMemorytStats(MemoryParams memoryStats, int gid) {
     try {
-        int res = this->mDb.exec("INSERT INTO memory VALUES (NULL,\""+
-                                 to_string(memoryStats.getUsed())+ "\",\""+
-                                 to_string(memoryStats.getUsage()) + "\")");
+        int res = this->mDb.exec("INSERT INTO memory VALUES (NULL,"+
+                                 to_string(memoryStats.getUsed())+","+
+                                 to_string(memoryStats.getUsage()) + ","+
+                                 to_string(gid) + ")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM memory ORDER BY id DESC  LIMIT 1");
@@ -145,11 +147,11 @@ int StatusDatabase::inserMemorytStats(MemoryParams memoryStats) {
     return 0;
 }
 
-bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats) {
+bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats, int gid) {
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM disk ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM disk WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             hasResult = true;
             resultDiskStats.setName(query.getColumn("name"));
@@ -168,14 +170,15 @@ bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats) {
     return hasResult;
 }
 
-int StatusDatabase::inserDiskStats(DiskParams diskStats) {
+int StatusDatabase::inserDiskStats(DiskParams diskStats, int gid) {
     try {
         int res = this->mDb.exec("INSERT INTO disk VALUES (NULL,\""+
                                  diskStats.getName()+ "\",\""+
                                  to_string(diskStats.getFree())+ "\",\""+
                                  to_string(diskStats.getTotal())+ "\",\""+
                                  to_string(diskStats.getUsed())+ "\",\""+
-                                 to_string(diskStats.getUsage()) + "\")");
+                                 to_string(diskStats.getUsage()) + "\",\""+
+                                 to_string(gid) + "\")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM disk ORDER BY id DESC  LIMIT 1");
@@ -194,11 +197,11 @@ int StatusDatabase::inserDiskStats(DiskParams diskStats) {
     return 0;
 }
 
-bool StatusDatabase::readSwapStats(MemoryParams &resultSwapStats) {
+bool StatusDatabase::readSwapStats(MemoryParams &resultSwapStats, int gid) {
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM swap ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM swap WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             hasResult = true;
             resultSwapStats.setUsed(query.getColumn("swapUsed").getDouble());
@@ -214,11 +217,12 @@ bool StatusDatabase::readSwapStats(MemoryParams &resultSwapStats) {
     return hasResult;
 }
 
-int StatusDatabase::insertSwaptStats(MemoryParams swapStats) {
+int StatusDatabase::insertSwaptStats(MemoryParams swapStats, int gid) {
     try {
         int res = this->mDb.exec("INSERT INTO swap VALUES (NULL,\""+
                                  to_string(swapStats.getUsed())+ "\",\""+
-                                 to_string(swapStats.getUsage()) + "\")");
+                                 to_string(swapStats.getUsage()) + "\",\""+
+                                 to_string(gid) + "\")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM swap ORDER BY id DESC  LIMIT 1");
@@ -235,5 +239,19 @@ int StatusDatabase::insertSwaptStats(MemoryParams swapStats) {
         return -1;
     }
     return 0;
+}
+
+int StatusDatabase::generalId() {
+    try {
+        SQLite::Statement query(mDb, "SELECT id FROM general ORDER BY id DESC  LIMIT 1");
+        int id = query.getColumn(0).getInt();
+        query.reset();
+        return 0;
+    }
+        catch(std::exception& e)
+        {
+            std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+            return -1;
+        }
 }
 

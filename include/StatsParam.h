@@ -7,39 +7,19 @@
 using namespace std;
 
 #include <string>
+#include "CpuParams.h"
+#include "MemoryParams.h"
+#include "DiskParams.h"
+#include "GeneralParams.h"
+#include <vector>
 
 
 class StatsParam {
 public:
-    // Setters
-    void setCpuUser(float cpuUser);
-    void setCpuWait(float cpuWait);
-    void setCpuSystem(float cpuSystem);
-    void setMemoryUsage(float memoryUsage);
-    void setMemoryUsed(float memoryUsed);
-    void setBootTime(int time);
-    void setUptime(int time);
-    void setSystem(string system);
-
-    void setStatsParam(string system, float cpuUser,float cpuWait,float cpuSystem,float memoryUsage,float memoryUsed, int upTime,int bootTime);
-
-    //getters
-    string getSystem();
-    int getBootTime();
-    int getUpTime();
-    float getCpuUser();
-    float getCpuWait();
-    float getCpuSystem();
-    float getMemoryUsage();
-    float getMemoryUsed();
-
-
-private:
-    string system;
-    int bootTime,upTime;
-    float cpuUser,cpuWait,cpuSystem,memoryUsage,memoryUsed;
-
-
+ CpuParams cpuParams;
+ MemoryParams memoryParams,swapParams;
+ vector<DiskParams> diskParams;
+ GeneralParams generalParams;
 };
 
 

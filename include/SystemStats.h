@@ -9,15 +9,16 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include "StatsParam.h"
 
-class SystemStats : public Stats {
+class SystemStats {
 public:
-    map<string,string> get();
+    StatsParam get();
 
 private:
-    vector<string> systemStatsKeys = {"System", "cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
+    vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
 
-    map<string,string> monitStatusParser(string status);
+    StatsParam monitStatusParser(string status);
     string monitStatusGetValue (string status,string key);
 };
 

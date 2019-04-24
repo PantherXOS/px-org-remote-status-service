@@ -22,16 +22,31 @@ string SystemStats::monitStatusGetValue(string status, string key) {
     return "";
 }
 
-map<string, string> SystemStats::monitStatusParser(string status) {
-    map <string, string> systemStatus;
+StatsParam SystemStats::monitStatusParser(string status) {
+    StatsParam statParam;
     for(string key : systemStatsKeys){
-        string value = monitStatusGetValue(status,key);
-        systemStatus.insert(std::pair<string,string>(key,value));
+        if(key == "System")
+            statParam.generalParams.setSystem(monitStatusGetValue(status,key));
+        else if(key == "version")
+            statParam.generalParams.setVersion("NOT Exist/ TODO");
+        else if(key == "uptime")
+            statParam.generalParams.setUpTime(atoi(monitStatusGetValue(status,key).c_str()));
+        else if(key == "boot time")
+            statParam.generalParams.setBootTime(atoi(monitStatusGetValue(status,key).c_str()));
+        else if(key == "memory usage")
+            //TODO split memory
+            statParam.memoryParams;
+         else if(key == "swap usage")
+             //TODO split swap
+            statParam.swapParams;
+        else if(key == "cpu")
+            //TODO split cpu
+            statParam.cpuParams;
     }
-    return systemStatus;
+    return statParam;
 }
 
-map<string,string> SystemStats::get() {
+StatsParam SystemStats::get() {
     string result = UTILS::COMMAND::Execute("monit status");
     return monitStatusParser(result);
 }

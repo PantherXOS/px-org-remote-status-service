@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS -pthread)
 include_directories(include)
 include_directories("interface")
 include_directories("libs")
+include_directories("libs/rapidjson")
 
 
 find_package(CapnProto CONFIG REQUIRED)
@@ -43,7 +44,10 @@ FILE(GLOB ApiSources
 FILE(GLOB DBSources
         include/StatusDatabase.h src/StatusDatabase.cpp)
 
-add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources})
+FILE(GLOB JSON
+        src/JsonBuilder.cpp include/JsonBuilder.h)
+
+add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} ${JSON})
 set(PROJECT_INCLUDE_DIR "src/include")
 set(RESTCLIENTCPP_INCLUDE_DIR "libs/restclient-cpp/include")
 set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
@@ -60,7 +64,7 @@ add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
-add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources})
+add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources} ${JSON})
 target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl)
 
 add_executable(Test_RestClient test/Test_RestClient.cpp ${ApiSources})

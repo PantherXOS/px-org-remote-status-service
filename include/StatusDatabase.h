@@ -38,18 +38,18 @@ public:
     bool readGeneralStats(GeneralParams &resultGeneralStats);
     int insertGeneralStats(GeneralParams generalStats);
 
-    bool readCpuStats(CpuParams &resultCpuStats);
-    int insertCpuStats(CpuParams cpuStats);
+    bool readCpuStats(CpuParams &resultCpuStats, int gid);
+    int insertCpuStats(CpuParams cpuStats, int gid);
 
-    bool readMemoryStats(MemoryParams &resultMemoryStats);
-    int inserMemorytStats(MemoryParams memoryStats);
+    bool readMemoryStats(MemoryParams &resultMemoryStats, int gid);
+    int inserMemorytStats(MemoryParams memoryStats, int gid);
 
-    bool readDiskStats(DiskParams &resultDiskStats);
-    int inserDiskStats(DiskParams diskStats);
+    bool readDiskStats(DiskParams &resultDiskStats, int gid);
+    int inserDiskStats(DiskParams diskStats, int gid);
 
-    bool readSwapStats(MemoryParams &resultSwapStats);
-    int insertSwaptStats(MemoryParams swapStats);
-
+    bool readSwapStats(MemoryParams &resultSwapStats, int gid);
+    int insertSwaptStats(MemoryParams swapStats, int gid);
+    int generalId();
 
 private:
     StatusDatabase() :
@@ -59,13 +59,13 @@ private:
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL)");
+                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL,gid INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL)");
+                    "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL,gid INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS swap (id INTEGER PRIMARY KEY, swapUsed REAL,swapUsage REAL)");
+                    "CREATE TABLE IF NOT EXISTS swap (id INTEGER PRIMARY KEY, swapUsed REAL,swapUsage REAL,gid INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL)");
+                    "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL,gid INTEGER)");
             }
         catch (std::exception& e)
         {
