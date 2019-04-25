@@ -170,7 +170,7 @@ bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats, int gid) {
     return hasResult;
 }
 
-int StatusDatabase::inserDiskStats(DiskParams diskStats, int gid) {
+int StatusDatabase::insertDiskStats(DiskParams diskStats, int gid) {
     try {
         int res = this->mDb.exec("INSERT INTO disk VALUES (NULL,\""+
                                  diskStats.getName()+ "\",\""+
@@ -246,12 +246,23 @@ int StatusDatabase::generalId() {
         SQLite::Statement query(mDb, "SELECT id FROM general ORDER BY id DESC  LIMIT 1");
         int id = query.getColumn(0).getInt();
         query.reset();
-        return 0;
+        return id;
     }
         catch(std::exception& e)
         {
             std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
             return -1;
         }
+}
+
+void StatusDatabase::insertAllStats(StatsParam statParams) {
+    insertGeneralStats(statParams.generalParams);
+    int gid = generalId();
+    inserMemorytStats(statParams.memoryParams,gid);
+    insertSwaptStats(statParams.swapParams,gid);
+    insertCpuStats(statParams.cpuParams,gid);
+    for(DiskParams ds : statParams.diskParams){
+        insertDiskStats(ds,gid);
+    }
 }
 

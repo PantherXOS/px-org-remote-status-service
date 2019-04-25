@@ -45,11 +45,13 @@ public:
     int inserMemorytStats(MemoryParams memoryStats, int gid);
 
     bool readDiskStats(DiskParams &resultDiskStats, int gid);
-    int inserDiskStats(DiskParams diskStats, int gid);
+    int insertDiskStats(DiskParams diskStats, int gid);
 
     bool readSwapStats(MemoryParams &resultSwapStats, int gid);
     int insertSwaptStats(MemoryParams swapStats, int gid);
     int generalId();
+
+    void insertAllStats(StatsParam statParams);
 
 private:
     StatusDatabase() :

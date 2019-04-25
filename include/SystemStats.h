@@ -18,8 +18,9 @@ public:
 private:
     vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
 
-    StatsParam monitStatusParser(string status);
+    void monitStatusParser(string status,StatsParam&  statParam);
     string monitStatusGetValue (string status,string key);
+    void diskStatusParser(string status, vector<DiskParams> &diskStatus);
 };
 
 

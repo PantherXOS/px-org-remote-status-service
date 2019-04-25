@@ -59,7 +59,7 @@ int main(){
     diskParams.setFree(20);
     diskParams.setName("sda1");
 
-    StatusDatabase::instance().inserDiskStats(diskParams, 1);
+    StatusDatabase::instance().insertDiskStats(diskParams, 1);
     StatusDatabase::instance().readDiskStats(diskResult, 1);
     cout<<"---------------- Disk table r/w test ----------------"<<endl;
     cout<<diskResult.toString()<<endl;
