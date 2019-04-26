@@ -29,7 +29,7 @@ float CpuParams::getWait() {
 }
 
 string CpuParams::toString() {
-    return "cpuUser    : "+ to_string(user) +"\n" +
-            "cpuSystem : "+ to_string(system) + "\n" +
-            "cpuWait   : "+ to_string(wait);
+    return "cpu User    : "+ to_string(user) +"\n" +
+            "cpu System : "+ to_string(system) + "\n" +
+            "cpu Wait   : "+ to_string(wait)+ "\n";
 }

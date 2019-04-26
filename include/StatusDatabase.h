@@ -44,14 +44,17 @@ public:
     bool readMemoryStats(MemoryParams &resultMemoryStats, int gid);
     int inserMemorytStats(MemoryParams memoryStats, int gid);
 
-    bool readDiskStats(DiskParams &resultDiskStats, int gid);
-    int insertDiskStats(DiskParams diskStats, int gid);
+    bool readDiskStats(vector<DiskParams> &resultDiskStats, int gid);
+    int insertDiskStats(vector<DiskParams> diskStats, int gid);
 
     bool readSwapStats(MemoryParams &resultSwapStats, int gid);
     int insertSwaptStats(MemoryParams swapStats, int gid);
     int generalId();
 
     void insertAllStats(StatsParam statParams);
+    void readAllStats(StatsParam &statsParam);
+
+    void deletLastStat();
 
 private:
     StatusDatabase() :

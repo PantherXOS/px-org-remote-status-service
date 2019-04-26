@@ -83,7 +83,6 @@ void SystemStats::monitStatusParser(string status,StatsParam&  statParam) {
             }
             token = st.substr(1, st.size()-2);
             statParam.swapParams.setUsage(atof(token.c_str()));
-            cout<<statParam.swapParams.toString()<<endl;
         }
         else if(key == "cpu"){
            string delimiter = " ";

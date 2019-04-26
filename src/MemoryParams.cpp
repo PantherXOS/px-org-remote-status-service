@@ -21,6 +21,6 @@ float MemoryParams::getUsage() {
 }
 
 string MemoryParams::toString() {
-    return "Used  : " + to_string(used) +"\n" +
-            "Usage: " + to_string(usage);
+    return "Memory/swap Used  : " + to_string(used) +"\n" +
+            "Memory/swap Usage: " + to_string(usage)+"\n";
 }

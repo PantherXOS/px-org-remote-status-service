@@ -20,6 +20,12 @@ public:
  MemoryParams memoryParams,swapParams;
  vector<DiskParams> diskParams;
  GeneralParams generalParams;
+ string toString(){
+     return cpuParams.toString()+
+            memoryParams.toString()+
+            swapParams.toString()+
+            generalParams.toString();
+ };
 };
 
 

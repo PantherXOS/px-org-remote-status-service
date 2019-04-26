@@ -147,18 +147,21 @@ int StatusDatabase::inserMemorytStats(MemoryParams memoryStats, int gid) {
     return 0;
 }
 
-bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats, int gid) {
+bool StatusDatabase::readDiskStats(vector<DiskParams> &resultDiskStats, int gid) {
+    DiskParams diskParams;
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM disk WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM disk WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC ");
+
         while (query.executeStep()) {
             hasResult = true;
-            resultDiskStats.setName(query.getColumn("name"));
-            resultDiskStats.setFree(query.getColumn("free").getDouble());
-            resultDiskStats.setTotal(query.getColumn("total").getDouble());
-            resultDiskStats.setUsage(query.getColumn("usage").getDouble());
-            resultDiskStats.setUsed(query.getColumn("used").getDouble());
+            diskParams.setName(query.getColumn("name"));
+            diskParams.setFree(query.getColumn("free").getDouble());
+            diskParams.setTotal(query.getColumn("total").getDouble());
+            diskParams.setUsage(query.getColumn("usage").getDouble());
+            diskParams.setUsed(query.getColumn("used").getDouble());
+            resultDiskStats.push_back(diskParams);
         }
         // Reset the query to use it again
         query.reset();
@@ -170,29 +173,30 @@ bool StatusDatabase::readDiskStats(DiskParams &resultDiskStats, int gid) {
     return hasResult;
 }
 
-int StatusDatabase::insertDiskStats(DiskParams diskStats, int gid) {
-    try {
-        int res = this->mDb.exec("INSERT INTO disk VALUES (NULL,\""+
-                                 diskStats.getName()+ "\",\""+
-                                 to_string(diskStats.getFree())+ "\",\""+
-                                 to_string(diskStats.getTotal())+ "\",\""+
-                                 to_string(diskStats.getUsed())+ "\",\""+
-                                 to_string(diskStats.getUsage()) + "\",\""+
-                                 to_string(gid) + "\")");
-        if(res == 0)
-            return -2;
-        SQLite::Statement query(mDb, "SELECT id FROM disk ORDER BY id DESC  LIMIT 1");
-        while (query.executeStep()) {
-            int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
-            if(id>0)
-                this->mDb.exec("DELETE FROM disk WHERE id="+to_string(id));
+int StatusDatabase::insertDiskStats(vector<DiskParams> diskStats, int gid) {
+    for(DiskParams disk : diskStats) {
+        try {
+            int res = this->mDb.exec("INSERT INTO disk VALUES (NULL,\"" +
+                                             disk.getName() + "\",\"" +
+                                     to_string(disk.getFree()) + "\",\"" +
+                                     to_string(disk.getTotal()) + "\",\"" +
+                                     to_string(disk.getUsed()) + "\",\"" +
+                                     to_string(disk.getUsage()) + "\",\"" +
+                                     to_string(gid) + "\")");
+            if (res == 0)
+                return -2;
+            SQLite::Statement query(mDb, "SELECT id FROM disk ORDER BY id DESC  LIMIT 1");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt() - MAX_TABLE_RECORD;
+                if (id > 0)
+                    this->mDb.exec("DELETE FROM disk WHERE id=" + to_string(id));
+            }
+            query.reset();
         }
-        query.reset();
-    }
-    catch(std::exception& e)
-    {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
-        return -1;
+        catch (std::exception &e) {
+            std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+            return -1;
+        }
     }
     return 0;
 }
@@ -244,7 +248,10 @@ int StatusDatabase::insertSwaptStats(MemoryParams swapStats, int gid) {
 int StatusDatabase::generalId() {
     try {
         SQLite::Statement query(mDb, "SELECT id FROM general ORDER BY id DESC  LIMIT 1");
-        int id = query.getColumn(0).getInt();
+        int id;
+        while (query.executeStep()) {
+           id = query.getColumn(0).getInt();
+        }
         query.reset();
         return id;
     }
@@ -261,8 +268,37 @@ void StatusDatabase::insertAllStats(StatsParam statParams) {
     inserMemorytStats(statParams.memoryParams,gid);
     insertSwaptStats(statParams.swapParams,gid);
     insertCpuStats(statParams.cpuParams,gid);
-    for(DiskParams ds : statParams.diskParams){
-        insertDiskStats(ds,gid);
+    insertDiskStats(statParams.diskParams,gid);
+}
+
+void StatusDatabase::readAllStats(StatsParam &statsParam) {
+    readGeneralStats(statsParam.generalParams);
+    int gid = generalId();
+    readMemoryStats(statsParam.memoryParams,gid);
+    readCpuStats(statsParam.cpuParams,gid);
+    readSwapStats(statsParam.swapParams, gid);
+    readDiskStats(statsParam.diskParams,gid);
+}
+
+void StatusDatabase::deletLastStat() {
+    int gid =  generalId();
+    try {
+        SQLite::Statement query(mDb,"DELETE FROM general WHERE id="+to_string(gid));
+        SQLite::Statement query1(mDb,"DELETE FROM swap WHERE gid="+to_string(gid));
+        SQLite::Statement query2(mDb,"DELETE FROM cpu WHERE gid="+to_string(gid));
+        SQLite::Statement query3(mDb,"DELETE FROM memory WHERE gid="+to_string(gid));
+        SQLite::Statement query4(mDb,"DELETE FROM disk WHERE gid="+to_string(gid));
+
+        query.reset();
+        query1.reset();
+        query2.reset();
+        query3.reset();
+        query4.reset();
     }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+
 }
 

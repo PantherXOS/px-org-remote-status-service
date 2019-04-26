@@ -45,5 +45,5 @@ string GeneralParams::toString() {
     return  "system   : " + system + "\n" +
             "version  : " + version + "\n" +
             "upTime   : " + to_string(upTime)  + "\n" +
-            "bootTime : " + to_string(bootTime);
+            "bootTime : " + to_string(bootTime)+ "\n";
 }

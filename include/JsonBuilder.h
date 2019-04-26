@@ -7,8 +7,12 @@
 
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include "CpuParams.h"
-#include "GeneralParams.h"
+#include "StatsParam.h"
+#include <iostream>
+
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 #include <iostream>
 
 using namespace rapidjson;
@@ -16,10 +20,14 @@ using namespace std;
 
 class JsonBuilder {
 public:
-    StringBuffer cpupart(CpuParams cpuParams);
+
+    StringBuffer allStatus(StatsParam statsParam);
+private:
+    StringBuffer cpuPart(CpuParams cpuParams);
+    StringBuffer memoryPart(MemoryParams memoryParams);
+    StringBuffer swapPart(MemoryParams swapParams);
+    StringBuffer diskPart(vector<DiskParams> diskParams);
     StringBuffer generalPart(GeneralParams generalParams);
-
-
 };
 
 
