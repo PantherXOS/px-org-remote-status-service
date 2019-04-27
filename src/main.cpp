@@ -2,40 +2,35 @@
 // Created by fakhri on 4/14/19.
 //
 #include <iostream>
-#include <array>
-#include <bits/unique_ptr.h>
-#include <sstream>
-#include <StatusDatabase.h>
-#include "SystemStats.h"
-#include "DiskStats.h"
 #include "RPCServer.h"
-#include "StatsParam.h"
-#include "JsonBuilder.h"
-#include "RESTclient.h"
-
+#include "StatChecker.h"
+#include <signal.h>
 
 using namespace std;
 
+sig_atomic_t running = 1;
+
+void sigIntHandler(int s){
+    running = 0;
+}
+
+int init () {
+    struct sigaction sigInt;
+    sigInt.sa_handler = sigIntHandler;
+    sigemptyset(&sigInt.sa_mask);
+    sigInt.sa_flags = 0;
+    sigaction(SIGINT, &sigInt, NULL);
+    return 0;
+}
+
+
 int main(){
-   RPCServer rpcServer;
-   rpcServer.start();
-    StatsParam statsParam,result;
-    SystemStats sysStat;
-    JsonBuilder jsonBuilder;
-
-   while(true){
-       sleep(3);
-      statsParam = sysStat.get();
-       StatusDatabase::instance().insertAllStats(statsParam);
-       cout<<statsParam.toString()<<endl;
-       sleep(3);
-       StatusDatabase::instance().readAllStats(result);
-       string js =jsonBuilder.allStatus(result).GetString();
-       cout<<js<<endl;
-       RESTclient resTclient;
-       resTclient.send("http:///localhost:8080//device-stats//",js);
-
-   };
-
-
+    init();
+    RPCServer rpcServer;
+    rpcServer.start();
+    StatChecker statChecker;
+    statChecker.run();
+    while (running);
+    statChecker.stop();
+    rpcServer.stop();
 }

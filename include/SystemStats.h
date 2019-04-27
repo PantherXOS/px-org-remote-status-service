@@ -13,6 +13,7 @@
 
 class SystemStats {
 public:
+    SystemStats();
     StatsParam get();
 
 private:

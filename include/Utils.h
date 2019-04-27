@@ -15,7 +15,7 @@ using namespace std;
 #include <wordexp.h>
 #include <dirent.h>
 #include <stdarg.h>
-
+#include <time.h>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -24,7 +24,9 @@ using namespace std;
 
 
 namespace UTILS {
-
+    namespace DATETIME {
+        int    ConvertToTimeStamp(string datetime);
+    }
     namespace COMMAND {
         string Execute(const char* cmd);
     }

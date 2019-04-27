@@ -48,15 +48,12 @@ StringBuffer JsonBuilder::swapPart(MemoryParams swapParams) {
 }
 
 StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
-
-
 // document is the root of a json message
     rapidjson::Document document;
     Document::AllocatorType& alloc = document.GetAllocator();
 
 // define the document as an object rather than an array
     document.SetObject();
-
 
 // must pass an allocator when the object may need to allocate memory
     rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
@@ -76,38 +73,36 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     swap.AddMember("usage",statsParam.swapParams.getUsage() , allocator);
 
     rapidjson::Value system(rapidjson::kObjectType);
-//    string s = statsParam.generalParams.getSystem().
-    system.AddMember("system", "TODO" , allocator);
-    system.AddMember("upTime", statsParam.generalParams.getUpTime(), allocator);
+    Value sys;
+    sys.SetString(StringRef(statsParam.generalParams.getSystem().c_str()));
+    system.AddMember("system", sys , allocator);
+    //system.AddMember("upTime", statsParam.generalParams.getUpTime(), allocator);
     system.AddMember("cpuUsage", cpu, allocator);
     system.AddMember("memory",memory , allocator);
     system.AddMember("swap",swap , allocator);
     rapidjson::Value Hardware(rapidjson::kObjectType);
-    {
+        {
         Value disks(kArrayType);
-for(DiskParams d : statsParam.diskParams){
-    {
-        Value disk(kObjectType);
-        disk.AddMember("name", "TODO", alloc);
-        disk.AddMember("total", d.getTotal(), alloc);
-        disk.AddMember("free", d.getFree(), alloc);
-        disk.AddMember("used", d.getUsed(), alloc);
-        disk.AddMember("usage", d.getUsage(), alloc);
-        disks.PushBack(disk, alloc);
-    }}
-
+        for(DiskParams d : statsParam.diskParams){
+            const char* str;
+            Value disk(kObjectType);
+            Value name;
+            name.SetString(StringRef(d.getName().c_str()));
+            disk.AddMember("name", name, alloc);
+            disk.AddMember("total", d.getTotal(), alloc);
+            disk.AddMember("free", d.getFree(), alloc);
+            disk.AddMember("used", d.getUsed(), alloc);
+            disk.AddMember("usage", d.getUsage(), alloc);
+            disks.PushBack(disk, alloc);
+            }
         Hardware.AddMember("disks", disks, alloc);
     }
 
-
-   // Hardware.AddMember("disk",disks , allocator);
     document.AddMember("bootTime", statsParam.generalParams.getBootTime(), allocator);
     document.AddMember("firmware", "TODO", allocator);
     document.AddMember("network", NULL, allocator);
     document.AddMember("hardware", Hardware, allocator);
     document.AddMember("system", system, allocator);
-
-
 
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);

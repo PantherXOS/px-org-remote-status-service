@@ -9,16 +9,16 @@
 using namespace std;
 
 int main(){
-    SystemStats sysStat;
-    map<string,string> sysStatResult =  sysStat.get();
-    for ( const auto &p : sysStatResult )
-    {
-        std::cout << p.first << '\t' << p.second << std::endl;
-    }
-    DiskStats diskStats;
-    map<string,string> disktatResult =  diskStats.get();
-    for ( const auto &p : disktatResult )
-    {
-        std::cout << p.first << '\t' << p.second << std::endl;
-    }
+//    SystemStats sysStat;
+//    map<string,string> sysStatResult =  sysStat.get();
+//    for ( const auto &p : sysStatResult )
+//    {
+//        std::cout << p.first << '\t' << p.second << std::endl;
+//    }
+//    DiskStats diskStats;
+//    map<string,string> disktatResult =  diskStats.get();
+//    for ( const auto &p : disktatResult )
+//    {
+//        std::cout << p.first << '\t' << p.second << std::endl;
+//    }
 }

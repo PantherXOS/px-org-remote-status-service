@@ -1,10 +1,15 @@
 //
 // Created by root on 4/14/19.
 //
-
-#include <Utils.h>
-
 #include "Utils.h"
+
+int    UTILS::DATETIME::ConvertToTimeStamp(string datetime){
+    struct tm tm;
+    time_t unixtime;
+    strptime(datetime.c_str(),"%a, %e %h %Y %H:%M:%S %z",&tm);
+    unixtime = mktime(&tm);
+    return unixtime;
+}
 
 string UTILS::COMMAND::Execute(const char* cmd) {
     std::array<char, 128> buffer;

@@ -2,22 +2,21 @@
 // Created by root on 4/23/19.
 //
 
-//
-// Created by root on 4/23/19.
-//
-
 #include "RESTclient.h"
-#include <iostream>
 
 using namespace std;
-int RESTclient::send(string path, string json) {
-    this->path = path;
-    this->json = json;
-    statThread = std::thread([&]() {
-        RestClient::Response r = RestClient::post(this->path, "application/json", this->json);
-        cout << r.code << endl;
-        // TODO check
-    });
-    statThread.join();
-    return 0;
+int RESTclient::send(string path, string token, string json) {
+    RestClient::init();
+    RestClient::Connection* conn = new RestClient::Connection(path);
+    conn->SetTimeout(5);
+    RestClient::HeaderFields headers;
+    headers["Accept"] = "application/json";
+    conn->SetHeaders(headers);
+    conn->AppendHeader("Authroization", "Bearer "+token);
+    conn->AppendHeader("Content-Type", "application/json");
+
+    RestClient::Response r = conn->post("/", json);
+    RestClient::disable();
+
+    return r.code;
 }

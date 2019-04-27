@@ -31,7 +31,7 @@ void SystemStats::monitStatusParser(string status,StatsParam&  statParam) {
         else if(key == "uptime")
             statParam.generalParams.setUpTime(atoi(monitStatusGetValue(status,key).c_str()));
         else if(key == "boot time")
-            statParam.generalParams.setBootTime(atoi(monitStatusGetValue(status,key).c_str()));
+            statParam.generalParams.setBootTime(UTILS::DATETIME::ConvertToTimeStamp(monitStatusGetValue(status,key)));
         else if(key == "memory usage"){
             string delimiter = " ";
             size_t pos = 0;
@@ -123,9 +123,9 @@ void SystemStats::diskStatusParser(string status, vector<DiskParams> &diskStatus
         std::stringstream tokenizer( str );
         string n,deviceName;
         int i = 0;
+        DiskParams diskParam;
         while( tokenizer >> n ) {
             i++;
-            DiskParams diskParam;
             if (i == 1)
                 diskParam.setName(n);
             else if (i == 2) diskParam.setTotal(atof(n.c_str()));
@@ -138,4 +138,8 @@ void SystemStats::diskStatusParser(string status, vector<DiskParams> &diskStatus
             }
         }
     }
+}
+
+SystemStats::SystemStats() {
+    string result = UTILS::COMMAND::Execute("monit");
 }

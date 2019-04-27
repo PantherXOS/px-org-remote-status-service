@@ -16,10 +16,8 @@ using namespace std;
 
 class RESTclient {
 public:
-    int send (string path, string json);
+    int send(string path, string token, string json);
 private:
-    string path,json;
-    std::thread statThread;
 };
 
 

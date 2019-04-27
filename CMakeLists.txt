@@ -27,7 +27,8 @@ FILE(GLOB CommonSources
         src/MemoryParams.cpp include/MemoryParams.h
         src/DiskParams.cpp include/DiskParams.h
         src/GeneralParams.cpp include/GeneralParams.h
-        src/StatsParam.cpp include/StatsParam.h)
+        src/StatsParam.cpp include/StatsParam.h
+        )
 
 FILE(GLOB RPCSources
         src/RPCServer.cpp include/RPCServer.h
@@ -36,7 +37,8 @@ FILE(GLOB RPCSources
 FILE(GLOB StatsSources
         include/Stats.h
         include/SystemStats.h src/SystemStats.cpp
-        src/DiskStats.cpp include/DiskStats.h)
+        src/DiskStats.cpp include/DiskStats.h
+        src/StatChecker.cpp include/StatChecker.h)
 
 FILE(GLOB ApiSources
         src/RESTclient.cpp include/RESTclient.h)
