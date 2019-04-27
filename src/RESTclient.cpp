@@ -11,10 +11,13 @@
 
 using namespace std;
 int RESTclient::send(string path, string json) {
+    this->path = path;
+    this->json = json;
     statThread = std::thread([&]() {
-        RestClient::Response r = RestClient::post("http://localhost:8080/device-stats/", "application/json", json);
+        RestClient::Response r = RestClient::post(this->path, "application/json", this->json);
         cout << r.code << endl;
-        cout << r.body << endl;
+        // TODO check
     });
+    statThread.join();
     return 0;
 }

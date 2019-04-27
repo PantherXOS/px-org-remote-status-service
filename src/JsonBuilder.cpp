@@ -45,7 +45,6 @@ StringBuffer JsonBuilder::swapPart(MemoryParams swapParams) {
     writer.EndObject();
     cout << swap.GetString() << endl;
     return swap;
-    return rapidjson::StringBuffer();
 }
 
 StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
@@ -83,7 +82,6 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     system.AddMember("cpuUsage", cpu, allocator);
     system.AddMember("memory",memory , allocator);
     system.AddMember("swap",swap , allocator);
-
     rapidjson::Value Hardware(rapidjson::kObjectType);
     {
         Value disks(kArrayType);
@@ -104,7 +102,7 @@ for(DiskParams d : statsParam.diskParams){
 
    // Hardware.AddMember("disk",disks , allocator);
     document.AddMember("bootTime", statsParam.generalParams.getBootTime(), allocator);
-    document.AddMember("firimware", "TODO", allocator);
+    document.AddMember("firmware", "TODO", allocator);
     document.AddMember("network", NULL, allocator);
     document.AddMember("hardware", Hardware, allocator);
     document.AddMember("system", system, allocator);

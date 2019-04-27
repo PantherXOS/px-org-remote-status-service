@@ -149,6 +149,7 @@ int StatusDatabase::inserMemorytStats(MemoryParams memoryStats, int gid) {
 
 bool StatusDatabase::readDiskStats(vector<DiskParams> &resultDiskStats, int gid) {
     DiskParams diskParams;
+    resultDiskStats.clear();
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)

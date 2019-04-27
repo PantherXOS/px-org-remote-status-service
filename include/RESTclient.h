@@ -18,6 +18,7 @@ class RESTclient {
 public:
     int send (string path, string json);
 private:
+    string path,json;
     std::thread statThread;
 };
 
