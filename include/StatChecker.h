@@ -24,6 +24,7 @@ public:
 private:
     volatile int threadMode;
     std::thread thread;
+    string getRestApiPath();
     string getUUID();
     string getToken();
 };

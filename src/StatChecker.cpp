@@ -20,7 +20,7 @@ void StatChecker::run() {
             string js =jsonBuilder.allStatus(result).GetString();
             cout<<js<<endl;
             RESTclient resTclient;
-            int result = resTclient.send("http://localhost:8080/devices/" + getUUID() + "/stats",
+            int result = resTclient.send(getRestApiPath()+"/devices/" + getUUID() + "/stats",
                                         getToken(), js);
             if (result == 200) {
                 cout << "Stat Data sent successfully" << endl;
@@ -30,6 +30,12 @@ void StatChecker::run() {
                 cout << "Sent Failed : Not implemented yet" << endl;
         };
     });
+}
+
+
+string StatChecker::getRestApiPath() {
+    // TODO
+    return "http://localhost:8080";
 }
 
 string StatChecker::getUUID() {
@@ -45,3 +51,4 @@ string StatChecker::getToken() {
 void StatChecker::stop() {
     this->threadMode=0;
 }
+
