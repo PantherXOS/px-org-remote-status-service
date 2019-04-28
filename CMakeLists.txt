@@ -12,11 +12,15 @@ include_directories("libs/rapidjson")
 
 find_package(CapnProto CONFIG REQUIRED)
 
+find_package(yaml-cpp REQUIRED)
+
 capnp_generate_cpp(CapnpSources CapnpHeaders
         interface/StatEvent.capnp)
 
 include_directories(${CapnProto_INCLUDE_DIRS})
 include_directories(SQLiteCpp/include)
+
+include_directories(${yaml-cpp_INCLUDE_DIRS})
 
 
 add_subdirectory(SQLiteCpp)
@@ -28,7 +32,7 @@ FILE(GLOB CommonSources
         src/DiskParams.cpp include/DiskParams.h
         src/GeneralParams.cpp include/GeneralParams.h
         src/StatsParam.cpp include/StatsParam.h
-        )
+        src/DeviceConfig.cpp include/DeviceConfig.h)
 
 FILE(GLOB RPCSources
         src/RPCServer.cpp include/RPCServer.h
@@ -56,7 +60,7 @@ set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
 set(RESTCLIENT_LIBRARY "librestclient-cpp.a")
 set(LIBRARIES_SEARCH_PATHS ${RESTCLIENT_LIBRARY} )
 include_directories(${HEADER_SEARCH_PATHS})
-target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl ${LIBRARIES_SEARCH_PATHS} curl pthread)
+target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp ${LIBRARIES_SEARCH_PATHS} curl pthread)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 
 #add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} ${DBSources} test/Test_Stats.cpp)

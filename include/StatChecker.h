@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <iostream>
+#include <fstream>
 #include <array>
 #include <bits/unique_ptr.h>
 #include <sstream>
@@ -16,6 +17,9 @@
 #include "StatsParam.h"
 #include "JsonBuilder.h"
 #include "RESTclient.h"
+#include "DeviceConfig.h"
+#include <yaml-cpp/yaml.h>
+
 
 class StatChecker {
 public:
@@ -25,8 +29,6 @@ private:
     volatile int threadMode;
     std::thread thread;
     string getRestApiPath();
-    string getUUID();
-    string getToken();
 };
 
 

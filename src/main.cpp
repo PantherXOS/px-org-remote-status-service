@@ -5,6 +5,7 @@
 #include "RPCServer.h"
 #include "StatChecker.h"
 #include <signal.h>
+#include <DeviceConfig.h>
 
 using namespace std;
 
@@ -28,6 +29,7 @@ int main(){
     init();
     RPCServer rpcServer;
     rpcServer.start();
+    DeviceConfig deviceConfig;
     StatChecker statChecker;
     statChecker.run();
     while (running);
