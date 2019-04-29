@@ -141,6 +141,7 @@ void SystemStats::diskStatusParser(string status, vector<DiskParams> &diskStatus
 }
 
 SystemStats::SystemStats() {
-    string result = UTILS::COMMAND::Execute("monit -c etc/monitrc");
+    string command = "monit -c "+string(getpwuid(getuid())->pw_dir)+"/monitrc";
+    string result = UTILS::COMMAND::Execute(command.c_str());
     cout<<"monit run successfully"<<endl;
 }

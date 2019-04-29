@@ -9,6 +9,9 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <zconf.h>
+#include <pwd.h>
+#include <sys/stat.h>
 #include "StatsParam.h"
 
 class SystemStats {

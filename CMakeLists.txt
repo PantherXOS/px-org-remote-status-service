@@ -58,7 +58,7 @@ set(LIBRARIES_SEARCH_PATHS ${RESTCLIENT_LIBRARY} )
 include_directories(${HEADER_SEARCH_PATHS})
 target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
-install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATION etc)
+install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATION ~/)
 
 #add_executable(Test_Stat test/Test_Stats.cpp ${CommonSources} ${StatsSources} ${DBSources} test/Test_Stats.cpp)
 #target_link_libraries(Test_Stat  SQLiteCpp sqlite3 dl)
