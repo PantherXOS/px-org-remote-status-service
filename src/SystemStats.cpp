@@ -108,7 +108,9 @@ void SystemStats::monitStatusParser(string status,StatsParam&  statParam) {
 
 StatsParam SystemStats::get() {
     StatsParam statsParam;
-    string result = UTILS::COMMAND::Execute("monit status");
+    string command = "monit -c "+UTILS::PATH::getExecPath() + "monitrc status";
+
+    string result = UTILS::COMMAND::Execute(command.c_str());
     monitStatusParser(result, statsParam);
     string disk = UTILS::COMMAND::Execute("df -h |grep ^/dev/sd");
     diskStatusParser(disk,statsParam.diskParams);
@@ -141,7 +143,8 @@ void SystemStats::diskStatusParser(string status, vector<DiskParams> &diskStatus
 }
 
 SystemStats::SystemStats() {
-    string command = "monit -c "+string(getpwuid(getuid())->pw_dir)+"/monitrc";
+    string command = "monit -c "+UTILS::PATH::getExecPath() + "monitrc";
+    cout << command << endl;
     string result = UTILS::COMMAND::Execute(command.c_str());
-    cout<<"monit run successfully"<<endl;
+    cout<<"monit run successfully " << result <<endl;
 }

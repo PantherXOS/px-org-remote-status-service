@@ -21,6 +21,9 @@ using namespace std;
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <unistd.h>
+#include <limits.h>
+
 
 
 namespace UTILS {
@@ -55,6 +58,8 @@ namespace UTILS {
         bool isunix(const string &path);
 
         string unix2path(const string &upath);
+
+        string getExecPath();
     }
 
 }

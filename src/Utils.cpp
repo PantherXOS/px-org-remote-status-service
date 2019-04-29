@@ -116,3 +116,16 @@ string UTILS::PATH::unix2path(const string &upath) {
     return path;
 }
 
+string UTILS::PATH::getExecPath(){
+    char *arg1;
+    arg1=(char *)malloc(1000*sizeof(char));
+    char exepath[PATH_MAX + 1] = {0};
+
+    sprintf( arg1, "/proc/%d/exe", getpid() );
+    readlink( arg1, exepath, 1024 );
+    string ret = string( exepath );
+    std::size_t found = ret.find_last_of("//");
+    ret=ret.substr(0,found+1);
+    free(arg1);
+    return ret;
+}
