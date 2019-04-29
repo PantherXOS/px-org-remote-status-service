@@ -6,7 +6,7 @@
 
 
 void StatChecker::run() {
-    DeviceConfig deviceConfig;
+
     thread = std::thread([&]() {
         StatsParam statsParam,result;
         SystemStats sysStat;
@@ -21,8 +21,9 @@ void StatChecker::run() {
             string js =jsonBuilder.allStatus(result).GetString();
             cout<<js<<endl;
             RESTclient resTclient;
-            int result = resTclient.send(getRestApiPath()+"/devices/" + deviceConfig.getUUID() + "/stats",
-                                         deviceConfig.getToken(), js);
+            int result = resTclient.send(getRestApiPath()+"/devices/" + getUUID() + "/stats",
+                                         getToken(), js);
+
             if (result == 200) {
                 cout << "Stat Data sent successfully" << endl;
                 StatusDatabase::instance().deletLastStat();
@@ -35,8 +36,14 @@ void StatChecker::run() {
 
 
 string StatChecker::getRestApiPath() {
-    // TODO
-    return "http://localhost:8080";
+    return deviceConfig.getManagerIP();
+}
+string StatChecker::getUUID() {
+    return deviceConfig.getUUID();
+}
+
+string StatChecker::getToken() {
+    return deviceConfig.getToken();
 }
 
 void StatChecker::stop() {
