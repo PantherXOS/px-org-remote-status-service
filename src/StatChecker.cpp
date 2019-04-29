@@ -15,11 +15,9 @@ void StatChecker::run() {
         while(this->threadMode){
             statsParam = sysStat.get();
             StatusDatabase::instance().insertAllStats(statsParam);
-//            cout<<statsParam.toString()<<endl;
-            sleep(1);
+            sleep(10);
             StatusDatabase::instance().readAllStats(result);
             string js =jsonBuilder.allStatus(result).GetString();
-            cout<<js<<endl;
             RESTclient resTclient;
             int result = resTclient.send(getRestApiPath()+"/devices/" + getUUID() + "/stats",
                                          getToken(), js);

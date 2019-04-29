@@ -110,7 +110,6 @@ StatsParam SystemStats::get() {
     StatsParam statsParam;
     string command = "monit -c "+string(getpwuid(getuid())->pw_dir)+"/monitrc status";
     string result = UTILS::COMMAND::Execute(command.c_str());
-    cout<<"(monit -c etc/monitrc status) run successfully " << result <<endl;
     monitStatusParser(result, statsParam);
     string disk = UTILS::COMMAND::Execute("df -h |grep ^/dev/sd");
     diskStatusParser(disk,statsParam.diskParams);
@@ -157,7 +156,6 @@ SystemStats::SystemStats() {
 
     string command = "monit -c "+string(getpwuid(getuid())->pw_dir)+"/monitrc";
     chmod((string(getpwuid(getuid())->pw_dir) + "/monitrc").c_str(),S_IRWXU);
-    cout << command << endl;
     string result = UTILS::COMMAND::Execute(command.c_str());
     cout<<"monit run successfully " << result <<endl;
 }

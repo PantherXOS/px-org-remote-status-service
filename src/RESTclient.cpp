@@ -17,6 +17,9 @@ int RESTclient::send(string path, string token, string json) {
 
     RestClient::Response r = conn->post("/", json);
     RestClient::disable();
-
+    cout << "PATH : " << path << endl<< endl;
+    cout << "TOKEN: " << token << endl<< endl;
+    cout << "JSON : " << json  << endl<< endl;
+    cout << "--------------------- " << r.code << endl << endl;
     return r.code;
 }
