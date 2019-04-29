@@ -144,6 +144,7 @@ void SystemStats::diskStatusParser(string status, vector<DiskParams> &diskStatus
 
 SystemStats::SystemStats() {
     string command = "monit -c "+UTILS::PATH::getExecPath() + "monitrc";
+    chmod((UTILS::PATH::getExecPath() + "monitrc").c_str(),S_IRWXU);
     cout << command << endl;
     string result = UTILS::COMMAND::Execute(command.c_str());
     cout<<"monit run successfully " << result <<endl;
