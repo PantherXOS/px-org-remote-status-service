@@ -31,6 +31,7 @@ int main(){
     rpcServer.start();
     DeviceConfig deviceConfig;
     StatChecker statChecker;
+    cout<<"px-org-remote-status-servece is run"<<endl;
     statChecker.run();
     while (running);
     statChecker.stop();
