@@ -12,7 +12,7 @@ int RESTclient::send(string path, string token, string json) {
     RestClient::HeaderFields headers;
     headers["Accept"] = "application/json";
     conn->SetHeaders(headers);
-    conn->AppendHeader("Authroization", "Bearer "+token);
+    conn->AppendHeader("Authorization", "Bearer "+token);
     conn->AppendHeader("Content-Type", "application/json");
 
     RestClient::Response r = conn->post("/", json);

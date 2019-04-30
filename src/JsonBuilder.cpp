@@ -75,16 +75,15 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     rapidjson::Value system(rapidjson::kObjectType);
     Value sys;
     sys.SetString(StringRef(statsParam.generalParams.getSystem().c_str()));
-    system.AddMember("system", sys , allocator);
+    system.AddMember("system", "TODO" , allocator);
     //system.AddMember("upTime", statsParam.generalParams.getUpTime(), allocator);
-    system.AddMember("cpuUsage", cpu, allocator);
+    system.AddMember("cpu", cpu, allocator);
     system.AddMember("memory",memory , allocator);
     system.AddMember("swap",swap , allocator);
     rapidjson::Value Hardware(rapidjson::kObjectType);
         {
         Value disks(kArrayType);
         for(DiskParams d : statsParam.diskParams){
-            const char* str;
             Value disk(kObjectType);
             Value name;
             name.SetString(StringRef(d.getName().c_str()));
@@ -98,7 +97,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
         Hardware.AddMember("disks", disks, alloc);
     }
 
-    document.AddMember("bootTime", statsParam.generalParams.getBootTime(), allocator);
+    document.AddMember("boot_time", statsParam.generalParams.getBootTime(), allocator);
     document.AddMember("firmware", "TODO", allocator);
     document.AddMember("network", NULL, allocator);
     document.AddMember("hardware", Hardware, allocator);
