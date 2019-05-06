@@ -16,7 +16,7 @@
 ##
 ## Start Monit in the background (run as a daemon):
 #
-set daemon  30              # check services at 30 seconds intervals
+set daemon  3              # check services at 30 seconds intervals
 #   with start delay 240    # optional: delay the first check by 4-minutes (by
 #                           # default Monit check immediately after Monit start)
 #
@@ -161,6 +161,10 @@ set httpd port 2812 and
     #with ssl {            # enable SSL/TLS and set path to server certificate
     #    pemfile: /etc/ssl/certs/monit.pem
     #}
+#######################set log
+
+check file tarsnap.log with path /var/log/tarsnap.log
+      if match "backup" then exec "/home/fakhri/test.sh ok"
 
 ###############################################################################
 ## Services
@@ -170,11 +174,11 @@ set httpd port 2812 and
 ## usage. Each test specifies a resource, conditions and the action to be
 ## performed should a test fail.
 #
-#  check system $HOST
+check system $HOST
 #    if loadavg (1min) > 4 then alert
 #    if loadavg (5min) > 2 then alert
-#    if cpu usage > 95% for 10 cycles then alert
-#    if memory usage > 75% then alert
+    if cpu usage > 1% for then exec "/home/fakhri/test.sh cpu"
+    if memory usage > 7% then exec "/home/fakhri/test.sh ram"
 #    if swap usage > 25% then alert
 #
 #

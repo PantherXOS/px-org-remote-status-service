@@ -1,0 +1,117 @@
+//
+// Created by Fakhri on 5/6/19.
+//
+
+#include "EventDatabase.h"
+
+EventDatabase &EventDatabase::instance(void) {
+    mkdir((string(getpwuid(getuid())->pw_dir) + DB_PATH).c_str(),0755);
+    static EventDatabase instance;
+    return instance;
+}
+
+bool EventDatabase::readEvent(EventObject &eventObject) {
+    bool hasResult = false;
+    int id;
+    try {
+        // Compile a SQL query, containing one parameter (index 1)
+        SQLite::Statement query(mDb, " SELECT * FROM event ORDER BY id DESC  LIMIT 1");
+        while (query.executeStep()) {
+            hasResult = true;
+            eventObject.setTime(query.getColumn("time"));
+            eventObject.setEvent(query.getColumn("event"));
+            eventObject.setTopic(query.getColumn("topic"));
+            id = query.getColumn(0).getInt();
+        }
+        // Reset the query to use it again
+        query.reset();
+        map<string,string> param;
+        this->readParams(param,id);
+        eventObject.setParam(param);
+
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+    return hasResult;
+}
+
+int EventDatabase::insertEvent(EventObject eventObject) {
+    try {
+        int res = this->mDb.exec("INSERT INTO event VALUES (NULL,"+
+                                         eventObject.getEvent()+","+
+                                         eventObject.getTopic() + ","+
+                                 to_string(eventObject.getTime()) + ")");
+        if(res == 0)
+            return -2;
+        SQLite::Statement query(mDb, "SELECT id FROM event ORDER BY id DESC  LIMIT 1");
+        while (query.executeStep()) {
+            int id = query.getColumn(0).getInt();
+            this->insertParams(eventObject.getParam(),id);
+        }
+        query.reset();
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        return -1;
+    }
+    return 0;
+}
+
+bool EventDatabase::deleteEvent(int id) {
+    return false;
+}
+
+bool EventDatabase::readParams(map<string, string> &params,int eid) {
+    bool hasResult = false;
+    int id;
+    try {
+        // Compile a SQL query, containing one parameter (index 1)
+
+
+        SQLite::Statement query(mDb, " SELECT * FROM param WHERE id="+to_string(id));
+        while (query.executeStep()) {
+            params.insert(pair<string,string> (query.getColumn("key"),query.getColumn("value")));
+        }
+        query.reset();
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+    return hasResult;
+}
+
+int EventDatabase::insertParams(map<string, string> params, int eid) {
+    try {
+        map<string,string>::iterator itr;
+        for(itr=params.begin();itr!=params.end();++itr){
+            int res = this->mDb.exec("INSERT INTO paam VALUES (NULL,"+
+                                     itr->first+","+
+                                     itr->second + ","+
+                                     to_string(eid) + ")");
+            if(res == 0)
+                return -2;
+            SQLite::Statement query(mDb, "SELECT id FROM param ORDER BY id DESC  LIMIT 1");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
+                if(id>0)
+                    this->mDb.exec("DELETE FROM param WHERE id="+to_string(id));
+            }
+            query.reset();
+        }
+
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        return -1;
+    }
+    return 0;
+}
+
+bool EventDatabase::deleteParams(int eid) {
+    return false;
+}

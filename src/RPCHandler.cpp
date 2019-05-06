@@ -9,14 +9,14 @@ using namespace std;
 
 kj::Promise<void> RPCHandler::emit(Event::Server::EmitContext ctx) {
     KJ_REQUIRE(ctx.getParams().hasEventData(), "Event Data structure not set");
+    EventObject eventObject;
     auto eventData = ctx.getParams().getEventData();
-    auto topic = eventData.getTopic();
-    auto event = eventData.getEvent();
-    auto time  = eventData.getTime();
-    cout << topic.cStr() << endl;
-    cout << event.cStr() << endl;
-    //TODO add todata base
-
+    eventObject.setTopic(eventData.getTopic());
+    eventObject.setEvent(eventData.getEvent());
+    eventObject.setTime(eventData.getTime());
+    //TODO add params
+    cout << eventObject.toString() << endl;
+    EventDatabase::instance().insertEvent(eventObject);
     return kj::READY_NOW;
 }
 

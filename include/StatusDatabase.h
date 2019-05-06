@@ -28,7 +28,7 @@ using namespace SQLite;
 
 class StatusDatabase {
 
-#define DB_NAME "db"
+#define DB_NAME "status.db"
 #define DB_PATH "/.userdata/status/"
 
 public:

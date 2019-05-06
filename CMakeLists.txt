@@ -28,7 +28,8 @@ FILE(GLOB CommonSources
         src/DiskParams.cpp include/DiskParams.h
         src/GeneralParams.cpp include/GeneralParams.h
         src/StatsParam.cpp include/StatsParam.h
-        src/DeviceConfig.cpp include/DeviceConfig.h)
+        src/DeviceConfig.cpp include/DeviceConfig.h
+        src/EventObject.cpp include/EventObject.h)
 
 FILE(GLOB RPCSources
         src/RPCServer.cpp include/RPCServer.h
@@ -44,7 +45,8 @@ FILE(GLOB ApiSources
         src/RESTclient.cpp include/RESTclient.h)
 
 FILE(GLOB DBSources
-        include/StatusDatabase.h src/StatusDatabase.cpp)
+        include/StatusDatabase.h src/StatusDatabase.cpp
+        include/EventDatabase.h src/EventDatabase.cpp)
 
 FILE(GLOB JSON
         src/JsonBuilder.cpp include/JsonBuilder.h)

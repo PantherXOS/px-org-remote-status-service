@@ -10,6 +10,8 @@
 #include <string>
 #include <kj/debug.h>
 #include <iostream>
+#include "EventObject.h"
+#include "EventDatabase.h"
 
 class RPCHandler final: public Event::Server {
 
