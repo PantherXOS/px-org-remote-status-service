@@ -21,8 +21,7 @@ void StatChecker::run() {
             RESTclient resTclient;
             int result = resTclient.send(getRestApiPath()+"/devices/" + getUUID() + "/stats",
                                          getToken(), js);
-
-            if (result == 200) {
+            if (result == 201) {
                 cout << "Stat Data sent successfully" << endl;
                 StatusDatabase::instance().deletLastStat();
             }

@@ -25,7 +25,7 @@ using namespace SQLite;
 
 class EventDatabase  {
 
-#define DB_NAME "event.db"
+#define EVENT_DB_NAME "event.db"
 #define DB_PATH "/.userdata/status/"
 
 public:
@@ -33,12 +33,18 @@ public:
     static EventDatabase & instance(void);
 
     bool readEvent(EventObject &eventObject);
+    bool readEvents(vector<EventObject> &eventObjects);
     int insertEvent(EventObject eventObject);
     bool deleteEvent(int id);
+    bool deleteLastEvent();
+    bool deleteEvents();
+    bool isDbBusy();
+    void setDbFree();
+    void setDbBusy();
 
 private:
     EventDatabase() :
-            mDb(string(getpwuid(getuid())->pw_dir) + DB_PATH+DB_NAME,SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)
+            mDb(string(getpwuid(getuid())->pw_dir) + DB_PATH+EVENT_DB_NAME,SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)
     {
         try {
             mDb.exec(
@@ -56,7 +62,7 @@ private:
     bool readParams(map<string,string> &params,int eid);
     int insertParams(map<string,string> params, int eid);
     bool deleteParams(int eid);
-
+    bool dbBusy;
     SQLite::Database    mDb;    ///< Database connection
 };
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "RPCServer.h"
 #include "StatChecker.h"
+#include "EventHandler.h"
 #include <signal.h>
 #include <DeviceConfig.h>
 
@@ -31,9 +32,12 @@ int main(){
     rpcServer.start();
     DeviceConfig deviceConfig;
     StatChecker statChecker;
+    EventHandler eventHandler;
     cout<<"px-org-remote-status-servece is run"<<endl;
     statChecker.run();
+    eventHandler.run();
     while (running);
     statChecker.stop();
+    eventHandler.stop();
     rpcServer.stop();
 }

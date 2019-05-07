@@ -13,6 +13,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "EventObject.h"
 #include <iostream>
 
 using namespace rapidjson;
@@ -22,6 +23,7 @@ class JsonBuilder {
 public:
 
     StringBuffer allStatus(StatsParam statsParam);
+    StringBuffer event(vector<EventObject> eventObject);
 private:
     StringBuffer cpuPart(CpuParams cpuParams);
     StringBuffer memoryPart(MemoryParams memoryParams);

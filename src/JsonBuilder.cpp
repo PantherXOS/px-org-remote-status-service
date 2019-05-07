@@ -110,5 +110,9 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     return strbuf;
 }
 
+StringBuffer JsonBuilder::event(vector<EventObject> eventObject) {
+    return rapidjson::StringBuffer();
+}
+
 
 

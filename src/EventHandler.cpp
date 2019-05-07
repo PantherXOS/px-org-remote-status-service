@@ -1,0 +1,55 @@
+//
+// Created by Fakhri on 5/7/19.
+//
+
+#include "EventHandler.h"
+
+EventHandler &EventHandler::instance(void) {
+    static EventHandler instance;
+    return instance;
+}
+
+void EventHandler::run() {
+
+    thread = std::thread([&]() {
+        StatsParam statsParam,result;
+        SystemStats sysStat;
+        JsonBuilder jsonBuilder;
+        DeviceConfig deviceConfig;
+        this->threadMode = 1;
+        while(this->threadMode){
+            while(isEventReceived()){
+                vector<EventObject> eventObjects;
+                if(!EventDatabase::instance().isDbBusy()) {
+                    eventReceived = false;
+                    EventDatabase::instance().readEvents(eventObjects);
+                    string js = jsonBuilder.event(eventObjects).GetString();
+                    RESTclient resTclient;
+                    int result = resTclient.send(
+                            deviceConfig.getManagerIP() + "/devices/" + deviceConfig.getUUID() + "/events",
+                            deviceConfig.getToken(), js);
+                    if (result == 201) {
+                        cout << "Event Data sent successfully" << endl;
+                        EventDatabase::instance().setDbBusy();
+                        EventDatabase::instance().deleteEvents();
+                        EventDatabase::instance().setDbFree();
+                    } else
+                        cout << "Sent Failed : Not implemented yet" << endl;
+                }
+            }
+        };
+    });
+
+}
+
+void EventHandler::stop() {
+    this->threadMode=0;
+}
+
+bool EventHandler::isEventReceived() {
+    return this->eventReceived;
+}
+
+void EventHandler::setEventReveived() {
+    this->eventReceived=true;
+}

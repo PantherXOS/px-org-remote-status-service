@@ -51,7 +51,10 @@ FILE(GLOB DBSources
 FILE(GLOB JSON
         src/JsonBuilder.cpp include/JsonBuilder.h)
 
-add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} ${JSON})
+FILE(GLOB EventSources
+        src/EventHandler.cpp include/EventHandler.h)
+
+add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} ${JSON} ${EventSources})
 set(PROJECT_INCLUDE_DIR "src/include")
 set(RESTCLIENTCPP_INCLUDE_DIR "libs/restclient-cpp/include")
 set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
