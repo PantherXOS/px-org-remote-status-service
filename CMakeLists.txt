@@ -74,8 +74,8 @@ target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp
 #target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 #install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
-#add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources} ${JSON})
-#target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl)
+add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources} ${JSON})
+target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl yaml-cpp)
 
 #add_executable(Test_RestClient test/Test_RestClient.cpp ${ApiSources})
 #target_link_libraries(Test_RestClient ${LIBRARIES_SEARCH_PATHS} pthread curl)

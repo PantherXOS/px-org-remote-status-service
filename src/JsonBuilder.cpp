@@ -111,7 +111,37 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
 }
 
 StringBuffer JsonBuilder::event(vector<EventObject> eventObject) {
-    return rapidjson::StringBuffer();
+    rapidjson::Document document;
+    Value name,val;
+    Document::AllocatorType& alloc = document.GetAllocator();
+    document.SetObject();
+    rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+    rapidjson::Value events(rapidjson::kArrayType);
+    for (auto _event : eventObject)
+    {
+        rapidjson::Value event(kObjectType);
+        name.SetString(StringRef(_event.getEvent().c_str()));
+        event.AddMember("event",name,alloc);
+        name.SetString(StringRef(_event.getTopic().c_str()));
+        event.AddMember("topic",name,alloc);
+        event.AddMember("time",_event.getTime(),alloc);
+        rapidjson::Value params(rapidjson::kArrayType);
+        for(auto _param : _event.getParam()){
+            rapidjson::Value param(kObjectType);
+            name.SetString(StringRef(_param.first.c_str()));
+            val.SetString(StringRef(_param.second.c_str()));
+            param.AddMember(name,val,alloc);
+            params.PushBack(param,alloc);
+        }
+        event.AddMember("params",params,alloc);
+        events.PushBack(event,alloc);
+    }
+    document.AddMember("events",events,alloc);
+    StringBuffer strbuf;
+    Writer<StringBuffer> writer(strbuf);
+    document.Accept(writer);
+
+    return strbuf;
 }
 
 

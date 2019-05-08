@@ -40,10 +40,10 @@ bool EventDatabase::readEvent(EventObject &eventObject) {
 int EventDatabase::insertEvent(EventObject eventObject) {
     this->setDbBusy();
     try {
-        int res = this->mDb.exec("INSERT INTO event VALUES (NULL,"+
-                                         eventObject.getEvent()+","+
-                                         eventObject.getTopic() + ","+
-                                 to_string(eventObject.getTime()) + ")");
+        int res = this->mDb.exec("INSERT INTO event VALUES (NULL,\""+
+                                         eventObject.getEvent() + "\",\""+
+                                         eventObject.getTopic() + "\",\""+
+                                 to_string(eventObject.getTime()) + "\")");
         if(res == 0) {
             this->setDbFree();
             return -2;
@@ -74,7 +74,7 @@ bool EventDatabase::readParams(map<string, string> &params,int eid) {
     int id;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM param WHERE id="+to_string(id));
+        SQLite::Statement query(mDb, " SELECT * FROM event_param WHERE id="+to_string(id));
         while (query.executeStep()) {
             params.insert(pair<string,string> (query.getColumn("key"),query.getColumn("value")));
         }
@@ -91,17 +91,17 @@ int EventDatabase::insertParams(map<string, string> params, int eid) {
     try {
         map<string,string>::iterator itr;
         for(itr=params.begin();itr!=params.end();++itr){
-            int res = this->mDb.exec("INSERT INTO paam VALUES (NULL,"+
+            int res = this->mDb.exec("INSERT INTO event_param VALUES (NULL,"+
                                      itr->first+","+
                                      itr->second + ","+
                                      to_string(eid) + ")");
             if(res == 0)
                 return -2;
-            SQLite::Statement query(mDb, "SELECT id FROM param ORDER BY id DESC  LIMIT 1");
+            SQLite::Statement query(mDb, "SELECT id FROM event_param ORDER BY id DESC  LIMIT 1");
             while (query.executeStep()) {
                 int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
                 if(id>0)
-                    this->mDb.exec("DELETE FROM param WHERE id="+to_string(id));
+                    this->mDb.exec("DELETE FROM event_param WHERE id="+to_string(id));
             }
             query.reset();
         }
@@ -118,7 +118,7 @@ int EventDatabase::insertParams(map<string, string> params, int eid) {
 bool EventDatabase::deleteParams(int eid) {
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " DELETE * FROM event" );
+        SQLite::Statement query(mDb, " DELETE * FROM event_param" );
         query.reset();
     }
     catch(std::exception& e)

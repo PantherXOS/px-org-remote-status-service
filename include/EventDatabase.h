@@ -48,7 +48,7 @@ private:
     {
         try {
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY,event TEXT,topic TEXT,time INTEGER");
+                    "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY,event TEXT,topic TEXT,time INTEGER)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS event_param (id INTEGER PRIMARY KEY,key TEXT,value TEXT, eid INTEGER)");
             }

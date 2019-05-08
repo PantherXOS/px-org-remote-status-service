@@ -4,6 +4,8 @@
 
 #include "StatusDatabase.h"
 #include "JsonBuilder.h"
+#include "EventDatabase.h"
+#include "EventObject.h"
 
 int main(){
     StatsParam allStats,allresult;
@@ -57,4 +59,24 @@ StatusDatabase::instance().readAllStats(allresult);
    for(DiskParams d : allresult.diskParams){
     cout<<d.toString()<<endl;
    }
+
+   //Test inser/read event
+   EventObject eventObject,res;
+   vector<EventObject> results;
+   eventObject.setEvent("Backup");
+   eventObject.setTopic("sucsses");
+   int i = 1234;
+   eventObject.setTime(i);
+   //eventObject.setParam(NULL);
+
+
+   EventDatabase::instance().insertEvent(eventObject);
+   EventDatabase::instance().readEvents(results);
+   for(EventObject rest : results)
+    cout<<rest.toString()<<endl;
+   JsonBuilder jsonBuilder;
+   string s = jsonBuilder.event(results).GetString();
+   cout<<s<<endl;
+
+
 }
