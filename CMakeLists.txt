@@ -70,6 +70,7 @@ install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATI
 
 add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders} ${CommonSources})
 target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
+install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
 #target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 #install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
