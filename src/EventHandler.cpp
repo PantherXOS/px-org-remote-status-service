@@ -29,10 +29,10 @@ void EventHandler::run() {
                             deviceConfig.getManagerIP() + "/devices/" + deviceConfig.getUUID() + "/events",
                             deviceConfig.getToken(), js);
                     if (result == 201) {
+                        for(EventObject ev : eventObjects){
+                            EventDatabase::instance().deleteEvent(ev.getId());
+                        }
                         cout << "Event Data sent successfully" << endl;
-                        EventDatabase::instance().setDbBusy();
-                        EventDatabase::instance().deleteEvents();
-                        EventDatabase::instance().setDbFree();
                     } else
                         cout << "Sent Failed : Not implemented yet" << endl;
                 }

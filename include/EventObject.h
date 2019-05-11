@@ -16,10 +16,12 @@ public:
     void setTopic(string topic);
     void setTime(int time);
     void setParam(map<string,string> params);
+    void setId(int id);
 
     string getEvent();
     string getTopic();
     int getTime();
+    int getId();
     map<string,string> getParam();
 
     string toString();
@@ -27,6 +29,7 @@ private:
 string event;
 string topic;
 int time;
+int id;
 map<string,string> params;
 
 };

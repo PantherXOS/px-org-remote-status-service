@@ -66,6 +66,19 @@ int EventDatabase::insertEvent(EventObject eventObject) {
 }
 
 bool EventDatabase::deleteEvent(int id) {
+    EventDatabase::instance().setDbBusy();
+    try {
+        // Compile a SQL query, containing one parameter (index 1)
+        SQLite::Statement query(mDb, "DELETE FROM event WHERE id="+to_string(id));
+        deleteParams(id);
+        query.reset();
+
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+    EventDatabase::instance().setDbFree();
     return false;
 }
 
@@ -118,7 +131,7 @@ int EventDatabase::insertParams(map<string, string> params, int eid) {
 bool EventDatabase::deleteParams(int eid) {
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " DELETE * FROM event_param" );
+        SQLite::Statement query(mDb, " DELETE * FROM event_param WHERE eid="+to_string(eid));
         query.reset();
     }
     catch(std::exception& e)
@@ -152,8 +165,8 @@ bool EventDatabase::readEvents(vector<EventObject> &eventObjects) {
             eventObject.setTime(query.getColumn("time"));
             eventObject.setEvent(query.getColumn("event"));
             eventObject.setTopic(query.getColumn("topic"));
-            id = query.getColumn(0).getInt();
-            this->readParams(param,id);
+            eventObject.setId(query.getColumn(0).getInt());
+            this->readParams(param, eventObject.getId());
             eventObject.setParam(param);
             eventObjects.push_back(eventObject);
         }

@@ -40,3 +40,12 @@ string EventObject::toString() {
     return "Event: { "+event + ", " + topic +", " + to_string(time) + ", "+ "TODO params" + "}";
 }
 
+void EventObject::setId(int id) {
+    this->id = id;
+
+}
+
+int EventObject::getId() {
+    return this->id;
+}
+
