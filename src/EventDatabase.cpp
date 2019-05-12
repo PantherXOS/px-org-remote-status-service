@@ -18,9 +18,9 @@ bool EventDatabase::readEvent(EventObject &eventObject) {
         SQLite::Statement query(mDb, " SELECT * FROM event ORDER BY id DESC  LIMIT 1");
         while (query.executeStep()) {
             hasResult = true;
-            eventObject.setTime(query.getColumn("time"));
-            eventObject.setEvent(query.getColumn("event"));
-            eventObject.setTopic(query.getColumn("topic"));
+            eventObject.setTime(query.getColumn("time").getInt());
+            eventObject.setEvent(query.getColumn("event").getString());
+            eventObject.setTopic(query.getColumn("topic").getString());
             id = query.getColumn(0).getInt();
         }
         // Reset the query to use it again
@@ -84,12 +84,11 @@ bool EventDatabase::deleteEvent(int id) {
 
 bool EventDatabase::readParams(map<string, string> &params,int eid) {
     bool hasResult = false;
-    int id;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM event_param WHERE id="+to_string(id));
+        SQLite::Statement query(mDb, " SELECT * FROM event_param WHERE eid="+to_string(eid));
         while (query.executeStep()) {
-            params.insert(pair<string,string> (query.getColumn("key"),query.getColumn("value")));
+            params.insert(pair<string,string> (query.getColumn("key").getString(),query.getColumn("value").getString()));
         }
         query.reset();
     }
@@ -164,8 +163,8 @@ bool EventDatabase::readEvents(vector<EventObject> &eventObjects) {
             map<string,string> param;
             hasResult = true;
             eventObject.setTime(query.getColumn("time").getInt());
-            eventObject.setEvent(query.getColumn("event"));
-            eventObject.setTopic(query.getColumn("topic"));
+            eventObject.setEvent(query.getColumn("event").getString());
+            eventObject.setTopic(query.getColumn("topic").getString());
             eventObject.setId(query.getColumn(0).getInt());
             this->readParams(param, eventObject.getId());
             eventObject.setParam(param);
