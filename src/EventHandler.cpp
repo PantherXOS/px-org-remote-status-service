@@ -18,25 +18,28 @@ void EventHandler::run() {
         DeviceConfig deviceConfig;
         this->threadMode = 1;
         while(this->threadMode){
-            while(isEventReceived()){
+//            if(isEventReceived()){
                 vector<EventObject> eventObjects;
                 if(!EventDatabase::instance().isDbBusy()) {
                     eventReceived = false;
                     EventDatabase::instance().readEvents(eventObjects);
-                    string js = jsonBuilder.event(eventObjects).GetString();
-                    RESTclient resTclient;
-                    int result = resTclient.send(
-                            deviceConfig.getManagerIP() + "/devices/" + deviceConfig.getUUID() + "/events",
-                            deviceConfig.getToken(), js);
-                    if (result == 201) {
-                        for(EventObject ev : eventObjects){
-                            EventDatabase::instance().deleteEvent(ev.getId());
-                        }
-                        cout << "Event Data sent successfully" << endl;
-                    } else
-                        cout << "Sent Failed : Not implemented yet" << endl;
+                    if(eventObjects.size()) {
+                        string js = jsonBuilder.event(eventObjects).GetString();
+                        RESTclient resTclient;
+                        int result = resTclient.send(
+                                deviceConfig.getManagerIP() + "/devices/" + deviceConfig.getUUID() + "/events",
+                                deviceConfig.getToken(), js);
+                        if (result == 201) {
+                            for (EventObject ev : eventObjects) {
+                                EventDatabase::instance().deleteEvent(ev.getId());
+                            }
+                            cout << "Event Data sent successfully" << endl;
+                        } else
+                            cout << "Sent Failed : Not implemented yet" << endl;
+                    }
                 }
-            }
+//            }
+            sleep(1);
         };
     });
 

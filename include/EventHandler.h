@@ -21,7 +21,7 @@ using namespace std;
 #include "RESTclient.h"
 #include "DeviceConfig.h"
 #include <yaml-cpp/yaml.h>
-
+#include <signal.h>
 
 
 class EventHandler {
@@ -32,7 +32,7 @@ public:
     bool isEventReceived();
     void setEventReveived();
 private:
-    volatile bool eventReceived;
+    volatile sig_atomic_t eventReceived= false;
     volatile int threadMode;
     std::thread thread;
 };

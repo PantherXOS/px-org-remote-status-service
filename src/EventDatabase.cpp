@@ -5,7 +5,10 @@
 #include "EventDatabase.h"
 
 EventDatabase &EventDatabase::instance(void) {
-    mkdir((string(getpwuid(getuid())->pw_dir) + DB_PATH).c_str(),0755);
+    string path = (string(getpwuid(getuid())->pw_dir) + USER_DATA);
+    mkdir(path.c_str(),0755);
+    path += STATUS_DATA;
+    mkdir(path.c_str(),0755);
     static EventDatabase instance;
     return instance;
 }

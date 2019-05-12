@@ -20,7 +20,7 @@
 #include "MemoryParams.h"
 #include "DiskParams.h"
 
-#define MAX_TABLE_RECORD 500
+#define MAX_TABLE_RECORD 100
 
 
 using namespace std;
@@ -29,7 +29,9 @@ using namespace SQLite;
 class StatusDatabase {
 
 #define DB_NAME "status.db"
-#define DB_PATH "/.userdata/status/"
+#define USER_DATA "/.userdata/"
+#define STATUS_DATA "status"
+#define DB_PATH  USER_DATA+STATUS_DATA
 
 public:
 
