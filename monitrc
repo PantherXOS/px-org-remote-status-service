@@ -164,7 +164,8 @@ set httpd port 2812 and
 #######################set log
 
 check file tarsnap.log with path /var/log/tarsnap.log
-      if match "backup" then exec "/home/fakhri/test.sh ok"
+      if match "backup:success" then exec "px-org-remote-status-service-event-action -t backup -e success"
+      if match "backup:failed" then exec "px-org-remote-status-service-event-action -t backup -e failed"      
 
 ###############################################################################
 ## Services

@@ -138,6 +138,7 @@ bool EventDatabase::deleteParams(int eid) {
     {
         std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
     }
+	return true;
 }
 
 bool EventDatabase::deleteLastEvent() {
@@ -162,7 +163,7 @@ bool EventDatabase::readEvents(vector<EventObject> &eventObjects) {
         while (query.executeStep()) {
             map<string,string> param;
             hasResult = true;
-            eventObject.setTime(query.getColumn("time"));
+            eventObject.setTime(query.getColumn("time").getInt());
             eventObject.setEvent(query.getColumn("event"));
             eventObject.setTopic(query.getColumn("topic"));
             eventObject.setId(query.getColumn(0).getInt());
