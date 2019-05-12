@@ -22,14 +22,7 @@ capnp_generate_cpp(CapnpSources CapnpHeaders
 add_subdirectory(SQLiteCpp)
 
 FILE(GLOB CommonSources
-        src/Utils.cpp  include/Utils.h
-        src/CpuParams.cpp include/CpuParams.h
-        src/MemoryParams.cpp include/MemoryParams.h
-        src/DiskParams.cpp include/DiskParams.h
-        src/GeneralParams.cpp include/GeneralParams.h
-        src/StatsParam.cpp include/StatsParam.h
-        src/DeviceConfig.cpp include/DeviceConfig.h
-        src/EventObject.cpp include/EventObject.h)
+        src/Utils.cpp  include/Utils.h)
 
 FILE(GLOB RPCSources
         src/RPCServer.cpp include/RPCServer.h
@@ -38,6 +31,12 @@ FILE(GLOB RPCSources
 FILE(GLOB StatsSources
         include/Stats.h
         include/SystemStats.h src/SystemStats.cpp
+		src/CpuParams.cpp include/CpuParams.h
+        src/MemoryParams.cpp include/MemoryParams.h
+        src/DiskParams.cpp include/DiskParams.h
+        src/GeneralParams.cpp include/GeneralParams.h
+        src/StatsParam.cpp include/StatsParam.h
+        src/DeviceConfig.cpp include/DeviceConfig.h
         src/DiskStats.cpp include/DiskStats.h
         src/StatChecker.cpp include/StatChecker.h)
 
@@ -52,7 +51,8 @@ FILE(GLOB JSON
         src/JsonBuilder.cpp include/JsonBuilder.h)
 
 FILE(GLOB EventSources
-        src/EventHandler.cpp include/EventHandler.h)
+        src/EventHandler.cpp include/EventHandler.h
+		src/EventObject.cpp include/EventObject.h)
 
 add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} ${JSON} ${EventSources})
 set(PROJECT_INCLUDE_DIR "src/include")
@@ -69,13 +69,14 @@ install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATI
 #target_link_libraries(Test_Stat  SQLiteCpp sqlite3 dl)
 
 add_executable(px-org-remote-status-service-event-action src/StatEventAction.cpp ${CapnpSources} ${CapnpHeaders} ${CommonSources})
-target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
+target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
+install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
 #target_link_libraries(px-org-remote-status-service-event-action CapnProto::capnp-rpc)
 #install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
-add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources} ${JSON})
-target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl yaml-cpp)
+#add_executable(Test_DB test/Test_Database.cpp  ${CommonSources} ${DBSources} ${JSON})
+#target_link_libraries(Test_DB  SQLiteCpp sqlite3 dl yaml-cpp)
 
 #add_executable(Test_RestClient test/Test_RestClient.cpp ${ApiSources})
 #target_link_libraries(Test_RestClient ${LIBRARIES_SEARCH_PATHS} pthread curl)
