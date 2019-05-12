@@ -178,8 +178,8 @@ check file tarsnap.log with path /var/log/tarsnap.log
 check system $HOST
 #    if loadavg (1min) > 4 then alert
 #    if loadavg (5min) > 2 then alert
-    if cpu usage > 1% for then exec "/home/fakhri/test.sh cpu"
-    if memory usage > 7% then exec "/home/fakhri/test.sh ram"
+#    if cpu usage > 1% for then exec "/home/fakhri/test.sh cpu"
+#    if memory usage > 7% then exec "/home/fakhri/test.sh ram"
 #    if swap usage > 25% then alert
 #
 #
