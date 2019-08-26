@@ -14,6 +14,7 @@ int RESTclient::send(string path, string token, string json) {
     conn->SetHeaders(headers);
     conn->AppendHeader("Authorization", "Bearer "+token);
     conn->AppendHeader("Content-Type", "application/json");
+    conn->SetCAInfoFilePath("/etc/ssl/certs/ca-certificates.crt");
 
     RestClient::Response r = conn->post("/", json);
     RestClient::disable();
