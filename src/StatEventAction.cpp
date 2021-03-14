@@ -2,7 +2,7 @@
 #include <fstream>
 #include <ctime>
 #include <capnp/ez-rpc.h>
-#include "StatEvent.capnp.h"
+#include <StatEvent.capnp.h>
 #include "Utils.h"
 
 #include "CLI11.hpp"

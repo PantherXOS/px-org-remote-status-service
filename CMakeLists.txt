@@ -4,20 +4,24 @@ project(px-org-remote-status-service)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS -pthread)
 
-find_package(CapnProto CONFIG REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(include)
-include_directories("interface")
-include_directories("libs")
-include_directories("libs/rapidjson")
-include_directories(${CapnProto_INCLUDE_DIRS})
-include_directories(SQLiteCpp/include)
-include_directories(${yaml-cpp_INCLUDE_DIRS})
-
+# Generate CapnProto source and header files ==================================
+find_package(CapnProto CONFIG REQUIRED)
+set(CAPNPC_SRC_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/interface" CACHE STRING "" FORCE)
+set(CAPNPC_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/interface" CACHE STRING "" FORCE)
+file(MAKE_DIRECTORY "${CAPNPC_OUTPUT_DIR}")
 capnp_generate_cpp(CapnpSources CapnpHeaders
         interface/StatEvent.capnp)
+include_directories(${CapnProto_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/interface)
+# =============================================================================
+
+include_directories(include)
+include_directories("libs")
+include_directories("libs/rapidjson")
+include_directories(SQLiteCpp/include)
+include_directories(${yaml-cpp_INCLUDE_DIRS})
 
 add_subdirectory(SQLiteCpp)
 
