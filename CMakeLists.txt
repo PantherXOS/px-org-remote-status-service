@@ -45,7 +45,8 @@ FILE(GLOB StatsSources
         src/StatChecker.cpp include/StatChecker.h)
 
 FILE(GLOB ApiSources
-        src/RESTclient.cpp include/RESTclient.h)
+        src/RESTclient.cpp include/RESTclient.h
+        src/DeviceIdentityClient.h.cpp)
 
 FILE(GLOB DBSources
         include/StatusDatabase.h src/StatusDatabase.cpp
