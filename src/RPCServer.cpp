@@ -46,6 +46,7 @@ void RPCServer::start() {
 
             while (instance->isRunning) {
                 waitScope.poll();
+                usleep(100);
             }
         }, this);
     }

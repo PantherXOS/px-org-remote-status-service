@@ -36,7 +36,9 @@ int main(){
     cout<<"px-org-remote-status-servece is run"<<endl;
     statChecker.run();
     eventHandler.run();
-    while (running);
+    while (running) {
+        sleep(1);
+    };
     statChecker.stop();
     eventHandler.stop();
     rpcServer.stop();
