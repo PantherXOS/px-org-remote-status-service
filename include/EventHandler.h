@@ -18,7 +18,6 @@ using namespace std;
 #include "RPCServer.h"
 #include "EventObject.h"
 #include "JsonBuilder.h"
-#include "RESTclient.h"
 #include "DeviceConfig.h"
 #include <yaml-cpp/yaml.h>
 #include <signal.h>

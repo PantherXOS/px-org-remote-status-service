@@ -16,7 +16,6 @@
 #include "RPCServer.h"
 #include "StatsParam.h"
 #include "JsonBuilder.h"
-#include "RESTclient.h"
 #include "DeviceConfig.h"
 #include <yaml-cpp/yaml.h>
 
