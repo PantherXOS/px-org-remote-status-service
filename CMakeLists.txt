@@ -46,7 +46,8 @@ FILE(GLOB StatsSources
 
 FILE(GLOB ApiSources
         src/RESTclient.cpp include/RESTclient.h
-        src/DeviceIdentityClient.h.cpp)
+        src/DeviceIdentityClient.cpp
+        src/IdPClient.cpp)
 
 FILE(GLOB DBSources
         include/StatusDatabase.h src/StatusDatabase.cpp

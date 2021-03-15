@@ -3,6 +3,7 @@
 //
 
 #include "EventHandler.h"
+#include <IdPClient.h>
 
 EventHandler &EventHandler::instance(void) {
     static EventHandler instance;
@@ -25,17 +26,14 @@ void EventHandler::run() {
                     EventDatabase::instance().readEvents(eventObjects);
                     if(eventObjects.size()) {
                         string js = jsonBuilder.event(eventObjects).GetString();
-                        RESTclient resTclient;
-                        int result = resTclient.send(
-                                deviceConfig.getManagerIP() + "/devices/" + deviceConfig.getUUID() + "/events",
-                                deviceConfig.getToken(), js);
-                        if (result == 201) {
+                        if (IdPClient::Instance().submitEvent(js)) {
                             for (EventObject ev : eventObjects) {
                                 EventDatabase::instance().deleteEvent(ev.getId());
                             }
                             cout << "Event Data sent successfully" << endl;
-                        } else
+                        } else {
                             cout << "Sent Failed : Not implemented yet" << endl;
+                        }
                     }
                 }
 //            }

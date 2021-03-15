@@ -10,6 +10,7 @@
 #include <vector>
 #include "rapidjson/document.h"
 
+#define IDENTITY_PROCESS "px-device-identity --operation GET_ACCESS_TOKEN"
 #define ACCESS_TOKEN_KEY "access_token"
 #define EXPIRES_AT_KEY "expires_at"
 
@@ -34,10 +35,9 @@ DeviceIdentityClient& DeviceIdentityClient::Instance() {
  * request for access_token from px-device-identity 
  **/
 AccessToken DeviceIdentityClient::getAccessToken() {
-    string cmd = "px-device-identity --operation GET_ACCESS_TOKEN";
     array<char, 1228> buffer;
     string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(IDENTITY_PROCESS, "r"), pclose);
     if (!pipe) {
         throw new std::runtime_error("popen() failed");
     }

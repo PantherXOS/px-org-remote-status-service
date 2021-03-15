@@ -27,13 +27,9 @@ public:
     void stop();
     DeviceConfig deviceConfig;
 
-    string getUUID();
-
-    string getToken();
 private:
     volatile int threadMode;
     std::thread thread;
-    string getRestApiPath();
 };
 
 

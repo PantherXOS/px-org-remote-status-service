@@ -3,45 +3,34 @@
 //
 
 #include "StatChecker.h"
-
+#include <IdPClient.h>
 
 void StatChecker::run() {
 
     thread = std::thread([&]() {
         StatsParam statsParam,result;
         SystemStats sysStat;
+        sleep(1);
         JsonBuilder jsonBuilder;
         this->threadMode = 1;
         while(this->threadMode){
             statsParam = sysStat.get();
-            StatusDatabase::instance().insertAllStats(statsParam);
             sleep(10);
+            StatusDatabase::instance().insertAllStats(statsParam);
             StatusDatabase::instance().readAllStats(result);
             string js =jsonBuilder.allStatus(result).GetString();
-            RESTclient resTclient;
-            int result = resTclient.send(getRestApiPath()+"/devices/" + getUUID() + "/stats",
-                                         getToken(), js);
-            if (result == 201) {
+            if (IdPClient::Instance().submitStatus(js)) {
                 cout << "Stat Data sent successfully" << endl;
                 StatusDatabase::instance().deletLastStat();
             }
-            else
+            else {
                 cout << "Sent Failed : Not implemented yet" << endl;
+            }
         };
     });
 }
 
 
-string StatChecker::getRestApiPath() {
-    return deviceConfig.getManagerIP();
-}
-string StatChecker::getUUID() {
-    return deviceConfig.getUUID();
-}
-
-string StatChecker::getToken() {
-    return deviceConfig.getToken();
-}
 
 void StatChecker::stop() {
     this->threadMode=0;
