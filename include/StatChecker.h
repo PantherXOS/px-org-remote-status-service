@@ -22,6 +22,7 @@
 
 class StatChecker {
 public:
+    explicit StatChecker(int checkInterval);
     void run();
     void stop();
     DeviceConfig deviceConfig;
@@ -29,6 +30,7 @@ public:
 private:
     volatile int threadMode;
     std::thread thread;
+    int m_checkInterval;
 };
 
 
