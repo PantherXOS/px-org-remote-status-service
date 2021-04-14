@@ -25,6 +25,7 @@ void StatChecker::run() {
                 std::this_thread::sleep_for(chrono::seconds(1));
                 continue;
             }
+            lastRun = now;
             auto nowTime = chrono::system_clock::to_time_t(now);
             cout << ">>> check stat on " << std::ctime(&nowTime) << endl;
             statsParam = sysStat.get();
