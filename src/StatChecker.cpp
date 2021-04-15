@@ -36,7 +36,7 @@ void StatChecker::run() {
                 cout << "Stat Data sent successfully" << endl;
                 StatusDatabase::instance().deletLastStat();
             } else {
-                cout << "Sent Failed : Not implemented yet" << endl;
+                cout << "Stat Sent Failed" << endl;
             }
         };
     });
