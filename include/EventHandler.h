@@ -14,7 +14,6 @@ using namespace std;
 #include <bits/unique_ptr.h>
 #include <sstream>
 #include "EventDatabase.h"
-#include "SystemStats.h"
 #include "RPCServer.h"
 #include "EventObject.h"
 #include "JsonBuilder.h"

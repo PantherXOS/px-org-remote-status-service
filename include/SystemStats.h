@@ -13,11 +13,16 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include "StatsParam.h"
+#include <AppConfig.h>
 
 class SystemStats {
 public:
-    SystemStats();
+    SystemStats(const AppConfig &cfg);
     StatsParam get();
+
+protected:
+    string initMonitRCFile(const string &monitrcPath);
+    bool runMonitProcess();
 
 private:
     vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
@@ -25,6 +30,9 @@ private:
     void monitStatusParser(string status,StatsParam&  statParam);
     string monitStatusGetValue (string status,string key);
     void diskStatusParser(string status, vector<DiskParams> &diskStatus);
+
+private:
+    std::string m_monitRCPath;
 };
 
 

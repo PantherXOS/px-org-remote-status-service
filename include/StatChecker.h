@@ -18,11 +18,12 @@
 #include "JsonBuilder.h"
 #include "DeviceConfig.h"
 #include <yaml-cpp/yaml.h>
+#include <AppConfig.h>
 
 
 class StatChecker {
 public:
-    explicit StatChecker(int checkInterval);
+    explicit StatChecker(const AppConfig& config);
     void run();
     void stop();
     DeviceConfig deviceConfig;
@@ -30,7 +31,7 @@ public:
 private:
     volatile int threadMode;
     std::thread thread;
-    int m_checkInterval;
+    AppConfig m_appConfig;
 };
 
 

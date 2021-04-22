@@ -7,21 +7,21 @@
 #include <chrono>
 
 
-StatChecker::StatChecker(int checkInterval) :
-        m_checkInterval(checkInterval) {}
+StatChecker::StatChecker(const AppConfig& config) :
+        m_appConfig(config) {}
 
 void StatChecker::run() {
 
     thread = std::thread([&]() {
         StatsParam statsParam, result;
-        SystemStats sysStat;
+        SystemStats sysStat(m_appConfig);
         sleep(1);
         JsonBuilder jsonBuilder;
         this->threadMode = 1;
         auto lastRun = chrono::time_point<chrono::system_clock>{};
         while (this->threadMode) {
             auto now = chrono::system_clock::now();
-            if (chrono::duration_cast<chrono::seconds>(now - lastRun).count() < m_checkInterval) {
+            if (chrono::duration_cast<chrono::seconds>(now - lastRun).count() < m_appConfig.interval) {
                 std::this_thread::sleep_for(chrono::seconds(1));
                 continue;
             }

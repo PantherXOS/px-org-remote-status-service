@@ -14,7 +14,6 @@ void EventHandler::run() {
 
     thread = std::thread([&]() {
         StatsParam statsParam,result;
-        SystemStats sysStat;
         JsonBuilder jsonBuilder;
         DeviceConfig deviceConfig;
         this->threadMode = 1;

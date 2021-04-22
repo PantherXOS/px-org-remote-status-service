@@ -8,6 +8,7 @@
 #include <CLI11/CLI11.hpp>
 #include <signal.h>
 #include <DeviceConfig.h>
+#include <AppConfig.h>
 
 using namespace std;
 
@@ -30,19 +31,19 @@ int init() {
 int main(int argc, char *argv[]) {
     init();
 
-    int interval = 300 /* 5 minutes as default interval */;
+    AppConfig cfg;
 
     CLI::App app{"px-org-remote-status-service: Remote Status Service"};
-    app.add_option("-i,--interval", interval, "status report interval", true);
+    app.add_option("-i,--interval", cfg.interval, "status report interval", true);
+    app.add_option("-m,--monit-config", cfg.monitConfig, "monitrc configuration path");
 
     CLI11_PARSE(app, argc, argv);
-
-    cout << "- Status Report Interval: " << interval << endl;
+    cfg.printConfig();
 
     RPCServer rpcServer;
     rpcServer.start();
     DeviceConfig deviceConfig;
-    StatChecker statChecker(interval);
+    StatChecker statChecker(cfg);
     EventHandler eventHandler;
     cout << "px-org-remote-status-service is run" << endl;
     statChecker.run();
