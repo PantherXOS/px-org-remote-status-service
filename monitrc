@@ -163,9 +163,9 @@ set httpd port 2812 and
     #}
 #######################set log
 
-check file tarsnap.log with path /var/log/tarsnap.log
-      if match "backup:success" then exec "/run/current-system/profile/bin/px-org-remote-status-service-event-action -t backup -e success"
-      if match "backup:failed" then exec "/run/current-system/profile/bin//px-org-remote-status-service-event-action -t backup -e failed"
+#check file tarsnap.log with path /var/log/tarsnap.log
+#      if match "backup:success" then exec "/run/current-system/profile/bin/px-org-remote-status-service-event-action -t backup -e success"
+#      if match "backup:failed" then exec "/run/current-system/profile/bin//px-org-remote-status-service-event-action -t backup -e failed"
 
 ###############################################################################
 ## Services
