@@ -6,6 +6,7 @@
 #define PX_HUB_SERVICE_RPCSERVER_H
 
 #include <thread>
+#include <string>
 
 class RPCServer {
 

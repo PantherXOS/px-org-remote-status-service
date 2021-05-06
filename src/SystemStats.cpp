@@ -103,9 +103,9 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
 }
 
 
-StatsParam SystemStats::get() {
+StatsParam SystemStats::get(const AppConfig &cfg) {
     StatsParam statsParam;
-    string command = "monit -c " + string(getpwuid(getuid())->pw_dir) + "/monitrc status";
+    string command = "monit -c " + cfg.monitConfig + " status";
     string result = UTILS::COMMAND::Execute(command.c_str());
     monitStatusParser(result, statsParam);
     string disk = UTILS::COMMAND::Execute("df -h |grep ^/dev/sd");

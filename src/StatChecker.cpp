@@ -28,7 +28,7 @@ void StatChecker::run() {
             lastRun = now;
             auto nowTime = chrono::system_clock::to_time_t(now);
             cout << ">>> check stat on " << std::ctime(&nowTime) << endl;
-            statsParam = sysStat.get();
+            statsParam = sysStat.get(m_appConfig);
             StatusDatabase::instance().insertAllStats(statsParam);
             StatusDatabase::instance().readAllStats(result);
             string js = jsonBuilder.allStatus(result).GetString();

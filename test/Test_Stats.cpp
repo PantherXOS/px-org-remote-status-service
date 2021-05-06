@@ -11,7 +11,7 @@ using namespace std;
 
 int main(){
     StatsParam statsParam;
-    SystemStats sysStat;
+    SystemStats sysStat();
     statsParam = sysStat.get();
     cout<<statsParam.toString()<<endl;
 }

@@ -18,7 +18,7 @@
 class SystemStats {
 public:
     SystemStats(const AppConfig &cfg);
-    StatsParam get();
+    StatsParam get(const AppConfig &cfg);
 
 protected:
     string initMonitRCFile(const string &monitrcPath);
