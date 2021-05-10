@@ -28,10 +28,11 @@ using namespace SQLite;
 
 class StatusDatabase {
 
-#define DB_NAME "status.db"
-#define USER_DATA "/.userdata/"
-#define STATUS_DATA "status"
-#define DB_PATH  USER_DATA+STATUS_DATA
+#define DB_NAME "status-database"
+#define USER_DATA "/.local"
+#define SHARE "/share"
+#define STATUS_DATA "/px-org-remote-status-service"
+#define DB_PATH  USER_DATA+SHARE+STATUS_DATA
 
 public:
 

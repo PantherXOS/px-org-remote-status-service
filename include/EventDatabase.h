@@ -25,10 +25,11 @@ using namespace SQLite;
 
 class EventDatabase  {
 
-#define EVENT_DB_NAME "event.db"
-#define USER_DATA "/.userdata/"
-#define STATUS_DATA "status"
-#define DB_PATH  USER_DATA+STATUS_DATA
+#define EVENT_DB_NAME "event-database.db"
+#define USER_DATA "/.local"
+#define SHARE "/share"
+#define STATUS_DATA "/px-org-remote-status-service"
+#define DB_PATH  USER_DATA+SHARE+STATUS_DATA
 
 public:
 
