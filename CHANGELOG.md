@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixing bug in RPCserver header file
 - fixing bug in get argument for monitrc path
 - Changing DB address
+- Chnaging rpc path
+- Changin event publisher path
+
 
 ## [0.1.5] - 2021-04-22
 ### Changes

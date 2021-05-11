@@ -4,12 +4,11 @@
 #include <capnp/ez-rpc.h>
 #include <StatEvent.capnp.h>
 #include "Utils.h"
-
 #include "CLI11.hpp"
 
 
 using namespace std;
-#define SERVER_ADDRESS "~/.system/rpc/remote-status-service"
+#define SERVER_ADDRESS "/tmp/" + string(getenv("USER")) + "/rpc/events"
 
 class StateEventAction{
 public:
