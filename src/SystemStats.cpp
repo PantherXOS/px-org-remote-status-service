@@ -172,6 +172,6 @@ bool SystemStats::runMonitProcess() {
     string command = "monit -c " + m_monitRCPath;
     chmod(m_monitRCPath.c_str(), S_IRWXU);
     string result = UTILS::COMMAND::Execute(command.c_str());
-    cout << "monit run successfully " << result << endl;
+    GLOG_INF("monit run successfully " + result );
     return true;
 }

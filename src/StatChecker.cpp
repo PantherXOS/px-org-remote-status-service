@@ -27,16 +27,17 @@ void StatChecker::run() {
             }
             lastRun = now;
             auto nowTime = chrono::system_clock::to_time_t(now);
-            cout << ">>> check stat on " << std::ctime(&nowTime) << endl;
+            GLOG_INF("check stat on " + string(std::ctime(&nowTime)));
             statsParam = sysStat.get(m_appConfig);
             StatusDatabase::instance().insertAllStats(statsParam);
             StatusDatabase::instance().readAllStats(result);
             string js = jsonBuilder.allStatus(result).GetString();
+            GLOG_INF( "JSON RESULT: "+ js);
             if (IdPClient::Instance().submitStatus(js)) {
-                cout << "Stat Data sent successfully" << endl;
+                GLOG_INF( "Stat Data sent successfully");
                 StatusDatabase::instance().deletLastStat();
             } else {
-                cout << "Stat Sent Failed" << endl;
+               GLOG_ERR( "Stat Sent Failed" );
             }
         };
     });

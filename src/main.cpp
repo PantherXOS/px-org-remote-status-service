@@ -9,6 +9,11 @@
 #include <signal.h>
 #include <DeviceConfig.h>
 #include <AppConfig.h>
+#include "Logger.h"
+
+Logger gLogger("px-org-remote-status-service");
+
+
 
 using namespace std;
 
@@ -26,26 +31,40 @@ int init() {
     sigaction(SIGINT, &sigInt, NULL);
     return 0;
 }
+void logInit(bool debugMode)
+{
+    /// Initialize the logger
+    LogTarget logTarget = LogTarget::SYSLOG;
+    LogLevel logLevel = LogLevel::INF;
+    if(debugMode)
+        logTarget = LogTarget::CONSOLE;
 
+    GLOG_INIT(logTarget, logLevel);
+    GLOG_INF("=> Starting Remote status Service");
+}
 
 int main(int argc, char *argv[]) {
     init();
-
+    bool debugMode = false;
     AppConfig cfg;
 
     CLI::App app{"px-org-remote-status-service: Remote Status Service"};
     app.add_option("-i,--interval", cfg.interval, "status report interval", true);
     app.add_option("-m,--monit-config", cfg.monitConfig, "monitrc configuration path");
-
+    app.add_option("-d,--debug", debugMode, "Active debug mode");
+    
+   
     CLI11_PARSE(app, argc, argv);
     cfg.printConfig();
+
+    logInit(debugMode);
 
     RPCServer rpcServer;
     rpcServer.start();
     DeviceConfig deviceConfig;
     StatChecker statChecker(cfg);
     EventHandler eventHandler;
-    cout << "px-org-remote-status-service is run" << endl;
+    GLOG_INF("Initializing ...");
     statChecker.run();
     eventHandler.run();
     while (running) {

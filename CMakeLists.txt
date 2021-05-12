@@ -17,7 +17,7 @@ include_directories(${CapnProto_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/interface)
 # =============================================================================
 
-include_directories(include)
+include_directories(src)
 include_directories("libs")
 include_directories("libs/rapidjson")
 include_directories(SQLiteCpp/include)
@@ -26,41 +26,44 @@ include_directories(${yaml-cpp_INCLUDE_DIRS})
 add_subdirectory(SQLiteCpp)
 
 FILE(GLOB CommonSources
-        src/Utils.cpp  include/Utils.h)
+        src/Utils.cpp   src/Utils.h
+        src/Logger.cpp  src/Logger.h)
 
 FILE(GLOB RPCSources
-        src/RPCServer.cpp include/RPCServer.h
-        src/RPCHandler.cpp include/RPCHandler.h)
+        src/RPCServer.cpp       src/RPCServer.h
+        src/RPCHandler.cpp      src/RPCHandler.h)
 
 FILE(GLOB StatsSources
-        include/Stats.h
-        include/SystemStats.h src/SystemStats.cpp
-		src/CpuParams.cpp include/CpuParams.h
-        src/MemoryParams.cpp include/MemoryParams.h
-        src/DiskParams.cpp include/DiskParams.h
-        src/GeneralParams.cpp include/GeneralParams.h
-        src/StatsParam.cpp include/StatsParam.h
-        src/DeviceConfig.cpp include/DeviceConfig.h
-        src/DiskStats.cpp include/DiskStats.h
-        src/StatChecker.cpp include/StatChecker.h)
+        src/Stats.h
+        src/SystemStats.h       src/SystemStats.cpp
+	src/CpuParams.cpp       src/CpuParams.h
+        src/MemoryParams.cpp    src/MemoryParams.h
+        src/DiskParams.cpp      src/DiskParams.h
+        src/GeneralParams.cpp   src/GeneralParams.h
+        src/StatsParam.cpp      src/StatsParam.h
+        src/DeviceConfig.cpp    src/DeviceConfig.h
+        src/DiskStats.cpp       src/DiskStats.h        
+        src/StatChecker.cpp     src/StatChecker.h
+        src/NetworkParam.cpp    src/NetworkParam.h
+        src/NetworkAddress.h)
 
 FILE(GLOB ApiSources
         src/DeviceIdentityClient.cpp
         src/IdPClient.cpp)
 
 FILE(GLOB DBSources
-        include/StatusDatabase.h src/StatusDatabase.cpp
-        include/EventDatabase.h src/EventDatabase.cpp)
+        src/StatusDatabase.h        src/StatusDatabase.cpp
+        src/EventDatabase.h         src/EventDatabase.cpp)
 
 FILE(GLOB JSON
-        src/JsonBuilder.cpp include/JsonBuilder.h)
+        src/JsonBuilder.cpp     src/JsonBuilder.h)
 
 FILE(GLOB EventSources
-        src/EventHandler.cpp include/EventHandler.h
-		src/EventObject.cpp include/EventObject.h)
+        src/EventHandler.cpp    src/EventHandler.h
+        src/EventObject.cpp     src/EventObject.h)
 
 add_executable(px-org-remote-status-service src/main.cpp ${ApiSources} ${RPCSources} ${CommonSources} ${StatsSources} ${CapnpSources} ${CapnpHeaders} ${DBSources} ${JSON} ${EventSources})
-set(PROJECT_INCLUDE_DIR "src/include")
+set(PROJECT_INCLUDE_DIR "src")
 set(RESTCLIENTCPP_INCLUDE_DIR "libs/restclient-cpp/include")
 set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
 set(RESTCLIENT_LIBRARY "librestclient-cpp.a")
