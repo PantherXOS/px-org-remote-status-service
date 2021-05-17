@@ -16,13 +16,14 @@ string SystemStats::monitStatusGetValue(string status, string key) {
             found += value.find_first_not_of(" ");
             value = line.substr(found, line.size());
             return value;
-        }
+            }
     }
     return "";
 }
 
 void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
     for (string key : systemStatsKeys) {
+        GLOG_INF("systemStatsKeys parser, key = "+key);
         if (key == "System")
             statParam.generalParams.setSystem(monitStatusGetValue(status, key));
         else if (key == "version")
@@ -35,6 +36,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             string delimiter = " ";
             size_t pos = 0;
             string token, amount;
+            GLOG_INF("status: "+status);
             string st = monitStatusGetValue(status, key);
             int count = 0;
             while ((pos = st.find(delimiter)) != std::string::npos) {
@@ -54,6 +56,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
                 ++count;
                 st.erase(0, pos + delimiter.length());
             }
+            GLOG_INF("memory usage value: "+st);
             token = st.substr(1, st.size() - 2);
             statParam.memoryParams.setUsage(atof(token.c_str()));
         } else if (key == "swap usage") {
@@ -105,11 +108,16 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
 
 StatsParam SystemStats::get(const AppConfig &cfg) {
     StatsParam statsParam;
-    string command = "monit -c " + cfg.monitConfig + " status";
+    string command = "monit -c /tmp/monitrc status";
+    // string command2= "cp "+ cfg.monitConfig +" /tmp/monitrc";
+    //UTILS::COMMAND::Execute(command.c_str());  
     string result = UTILS::COMMAND::Execute(command.c_str());
+    GLOG_INF("Monit status result: "+result);
     monitStatusParser(result, statsParam);
+    GLOG_INF("Status data parsed");
     string disk = UTILS::COMMAND::Execute("df -h |grep ^/dev/sd");
     diskStatusParser(disk, statsParam.diskParams);
+    GLOG_INF("Status successfully read");
     return statsParam;
 }
 
@@ -169,9 +177,27 @@ string SystemStats::initMonitRCFile(const string &monitrcPath) {
 }
 
 bool SystemStats::runMonitProcess() {
-    string command = "monit -c " + m_monitRCPath;
-    chmod(m_monitRCPath.c_str(), S_IRWXU);
+    string command2 = "cp "+ m_monitRCPath +" /tmp/monitrc";
+    string res = UTILS::COMMAND::Execute(command2.c_str()); 
+    string res2 = "chmod 700 /tmp/monitrc";  
+    UTILS::COMMAND::Execute(res2.c_str());
+    string command = "monit -c /tmp/monitrc > /tmp/monitrc.runner.log 2>&1";
+    //chmod(m_monitRCPath.c_str(), S_IRWXU);
+    
     string result = UTILS::COMMAND::Execute(command.c_str());
     GLOG_INF("monit run successfully " + result );
     return true;
+}
+
+string SystemStats::exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
 }
