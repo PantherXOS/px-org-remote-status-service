@@ -13,6 +13,7 @@ using namespace std;
 #include <zconf.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#include "Logger.h"
 
 #include <yaml-cpp/yaml.h>
 

@@ -50,15 +50,13 @@ AccessToken DeviceIdentityClient::getAccessToken() {
     rapidjson::Document doc;
     while (std::getline(ss, line)) {
         lines.push_back(line);
-        cout << line << endl;
+        GLOG_INF("line: "+line);
     }
     if (lines.size() == 0 
         || doc.Parse(lines[lines.size() - 1].c_str()).HasParseError()
         || !doc.HasMember(ACCESS_TOKEN_KEY)) {
-        std::cout << line << std::endl;
         throw new std::runtime_error("invalid response");
     }
-
     return AccessToken(
         doc[ACCESS_TOKEN_KEY].GetString(),
         doc[EXPIRES_AT_KEY].GetInt());

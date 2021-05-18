@@ -37,7 +37,7 @@ bool EventDatabase::readEvent(EventObject &eventObject) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
     }
     return hasResult;
 }
@@ -62,7 +62,7 @@ int EventDatabase::insertEvent(EventObject eventObject) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
         this->setDbFree();
         return -1;
     }
@@ -81,7 +81,7 @@ bool EventDatabase::deleteEvent(int id) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
     }
     EventDatabase::instance().setDbFree();
     return false;
@@ -99,7 +99,7 @@ bool EventDatabase::readParams(map<string, string> &params,int eid) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
     }
     return hasResult;
 }
@@ -126,7 +126,7 @@ int EventDatabase::insertParams(map<string, string> params, int eid) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
         return -1;
     }
     return 0;
@@ -140,7 +140,7 @@ bool EventDatabase::deleteParams(int eid) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
     }
 	return true;
 }
@@ -180,7 +180,7 @@ bool EventDatabase::readEvents(vector<EventObject> &eventObjects) {
     }
     catch(std::exception& e)
     {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        GLOG_ERR("Err:   SQLite exception: " + string(e.what()));
     }
     this->setDbFree();
     return hasResult;

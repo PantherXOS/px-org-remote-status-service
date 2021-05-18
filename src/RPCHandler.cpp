@@ -15,7 +15,7 @@ kj::Promise<void> RPCHandler::emit(Event::Server::EmitContext ctx) {
     eventObject.setEvent(eventData.getEvent());
     eventObject.setTime(eventData.getTime());
     //TODO add params
-    cout << eventObject.toString() << endl;
+    GLOG_INF("Event: eventObject.toString()");
     if(!EventDatabase::instance().isDbBusy()) {
         EventDatabase::instance().insertEvent(eventObject);
         EventHandler::instance().setEventReveived();

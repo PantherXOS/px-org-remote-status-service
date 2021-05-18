@@ -57,11 +57,7 @@ int main(int argc, char *argv[]) {
     CLI11_PARSE(app, argc, argv);
     cfg.printConfig();
     logInit(debugMode);
-    GLOG_INF("PATH: "+string(getenv("PATH")));
-    string command = "monit -v > /tmp/log.runner.log 2>&1";
-    //chmod(m_monitRCPath.c_str(), S_IRWXU);
-    
-    string result = UTILS::COMMAND::Execute(command.c_str());
+    GLOG_INF("PATH: "+string(getenv("PATH")));   
     RPCServer rpcServer;
     rpcServer.start();
     DeviceConfig deviceConfig;

@@ -38,6 +38,6 @@ DeviceConfig::DeviceConfig(const string& path) {
         this->title = config[CFG_TITLE_KEY].as<string>();
         this->inited = true;
     } catch(exception& e) {
-        std::cout << e.what() << "\n";
+        GLOG_INF("Exception: " + string(e.what()));
     }
 }

@@ -24,7 +24,7 @@ bool IdPClient::updateToken() {
     try {
         this->_token = DeviceIdentityClient::Instance().getAccessToken();
     } catch(std::runtime_error* err) {
-        cout << "ERROR: Update token failed: " << err->what() << endl;
+        GLOG_WRN ("ERROR: Update token failed: " + string(err->what()));
         return false;
     }
     return true;
@@ -49,8 +49,9 @@ RestClient::Response IdPClient::post(const string& path, const string& data, con
 
 bool IdPClient::submitStatus(const string& status) {
     auto resp = this->post("/devices/status", status);
+    GLOG_INF("Server response: "+to_string(resp.code));
     if (resp.code != 200 && resp.code != 201) {
-        cout << "ERROR: Submit status failed: " << resp.body << endl;
+        GLOG_WRN("ERROR: Submit status failed: " + resp.body );
         return false;
     }
     return true;
@@ -59,7 +60,7 @@ bool IdPClient::submitStatus(const string& status) {
 bool IdPClient::submitEvent(const string& event) {
     auto resp = this->post("/devices/event", event);
     if (resp.code != 200 && resp.code != 201) {
-        cout << "ERROR: Submit event failed: " << resp.body << endl;
+        GLOG_WRN("ERROR: Submit event failed: " + resp.body );
         return false;
     }
     return true;

@@ -29,9 +29,9 @@ void EventHandler::run() {
                             for (EventObject ev : eventObjects) {
                                 EventDatabase::instance().deleteEvent(ev.getId());
                             }
-                            cout << "Event Data sent successfully" << endl;
+                            GLOG_INF("Event Data sent successfully");
                         } else {
-                            cout << "Sent Failed : Not implemented yet" << endl;
+                            GLOG_INF("Sent Failed : Not implemented yet");
                         }
                     }
                 }

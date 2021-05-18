@@ -13,6 +13,7 @@
 #include "EventObject.h"
 #include "EventDatabase.h"
 #include "EventHandler.h"
+#include "Logger.h"
 
 class RPCHandler final: public Event::Server {
 

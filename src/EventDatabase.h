@@ -15,6 +15,7 @@
 #include <vector>
 #include <sys/stat.h>
 #include "EventObject.h"
+#include "Logger.h"
 
 
 #define MAX_TABLE_RECORD 100
@@ -57,7 +58,7 @@ private:
             }
         catch (std::exception& e)
         {
-            std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+            GLOG_WRN("Err:   SQLite exception: " + string(e.what()));
         }
 
     }

@@ -159,8 +159,8 @@ string SystemStats::initMonitRCFile(const string &monitrcPath) {
         ofstream cfgStream(configPath);
         if (!cfgStream.is_open()) {
             //don't have write permission to configPath, use default path instead
-            cout << "WRN: don't have write permission to config path: " << configPath << endl;
-            cout << "\tuse default path instead: " << defaultPath << endl;
+            GLOG_INF("WRN: don't have write permission to config path: "+ configPath );
+            GLOG_INF("\tuse default path instead: " + defaultPath);
             configPath = defaultPath;
             cfgStream.open(configPath);
         }
@@ -181,8 +181,7 @@ bool SystemStats::runMonitProcess() {
     string res = UTILS::COMMAND::Execute(command2.c_str()); 
     string res2 = "chmod 700 /tmp/monitrc";  
     UTILS::COMMAND::Execute(res2.c_str());
-    string command = "monit -c /tmp/monitrc > /tmp/monitrc.runner.log 2>&1";
-    //chmod(m_monitRCPath.c_str(), S_IRWXU);
+    string command = "monit -c /tmp/monitrc";
     
     string result = UTILS::COMMAND::Execute(command.c_str());
     GLOG_INF("monit run successfully " + result );

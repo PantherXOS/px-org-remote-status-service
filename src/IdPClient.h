@@ -11,6 +11,7 @@
 #include <DeviceIdentityClient.h>
 #include <restclient-cpp/restclient.h>
 #include <restclient-cpp/connection.h>
+#include "Logger.h"
 
 using namespace std;
 
