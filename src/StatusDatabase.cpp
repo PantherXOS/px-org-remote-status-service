@@ -276,6 +276,7 @@ void StatusDatabase::insertAllStats(StatsParam statParams) {
     insertSwaptStats(statParams.swapParams,gid);
     insertCpuStats(statParams.cpuParams,gid);
     insertDiskStats(statParams.diskParams,gid);
+    insertNetworkParams(statParams.networkParamList,gid);
 }
 
 void StatusDatabase::readAllStats(StatsParam &statsParam) {
@@ -285,6 +286,7 @@ void StatusDatabase::readAllStats(StatsParam &statsParam) {
     readCpuStats(statsParam.cpuParams,gid);
     readSwapStats(statsParam.swapParams, gid);
     readDiskStats(statsParam.diskParams,gid);
+    readNetworkParams(statsParam.networkParamList,gid);
 }
 
 void StatusDatabase::deletLastStat() {
@@ -295,6 +297,7 @@ void StatusDatabase::deletLastStat() {
         SQLite::Statement query2(mDb,"DELETE FROM cpu WHERE gid="+to_string(gid));
         SQLite::Statement query3(mDb,"DELETE FROM memory WHERE gid="+to_string(gid));
         SQLite::Statement query4(mDb,"DELETE FROM disk WHERE gid="+to_string(gid));
+        SQLite::Statement query5(mDb,"DELETE FROM network WHERE gid="+to_string(gid));
 
         query.reset();
         query1.reset();
@@ -308,4 +311,69 @@ void StatusDatabase::deletLastStat() {
     }
 
 }
+
+bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams, int gid){
+    NetworkParam networkParam;
+    resultNetworkParams.clear();
+    bool hasResult = false;
+    try {
+        // Compile a SQL query, containing one parameter (index 1)
+        SQLite::Statement query(mDb, " SELECT * FROM network WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC ");
+
+        while (query.executeStep()) {
+            hasResult = true;
+            networkParam.setName(query.getColumn("name"));
+            networkParam.setMac(query.getColumn("mac"));
+            // networkParam.setType(query.getColumn("type"));
+            // diskParams.setUsage(query.getColumn("usage").getDouble());
+            // diskParams.setUsed(query.getColumn("used").getDouble());
+            // resultDiskStats.push_back(diskParams);
+        }
+        // Reset the query to use it again
+        query.reset();
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+    return hasResult;
+}
+
+
+int StatusDatabase::insertNetworkParams(vector<NetworkParam> networkParams, int gid){
+        for(auto net : networkParams) {
+        try {
+            int res = this->mDb.exec("INSERT INTO network VALUES (NULL,\"" +
+                                                net.getName() + "\",\"" +
+                                                net.getMac() + "\",\"" +
+                                                net.getType() + "\",\"" +
+                                                to_string(net.isActive()) + "\",\"" +
+                                                net.getIP4().ip + "\",\"" +
+                                                net.getIP4().extIp + "\",\"" +
+                                                net.getIP4().gateway + "\",\"" +
+                                                //net.getIP4().dns + "\",\"" +
+                                                net.getIP6().ip + "\",\"" +
+                                                net.getIP6().extIp + "\",\"" +
+                                                net.getIP6().gateway + "\",\"" +                                 
+                                                //net.getIP6().dns + "\",\"" + 
+                                                to_string(gid) + "\")");
+            if (res == 0)
+                return -2;
+            SQLite::Statement query(mDb, "SELECT id FROM network ORDER BY id DESC  LIMIT 1");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt() - MAX_TABLE_RECORD;
+                if (id > 0)
+                    this->mDb.exec("DELETE FROM network WHERE id=" + to_string(id));
+            }
+            query.reset();
+        }
+        catch (std::exception &e) {
+            std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+            return -1;
+        }
+    }
+    return 0;
+
+}
+
 

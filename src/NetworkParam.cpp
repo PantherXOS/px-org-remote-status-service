@@ -29,10 +29,10 @@ bool    NetworkParam::isActive(){
 }
 
 void    NetworkParam::setType(NetworkInterfaceType type){
-    this->type = type;
+    this->type = networkTypeConvertor(type);
 }
 
-NetworkInterfaceType  NetworkParam::getType(){
+string  NetworkParam::getType(){
     return this->type;   
 }
 
@@ -52,9 +52,44 @@ NetworkAddress  NetworkParam::getIP6(){
     return ip6;
 }
     
-
+string NetworkParam::networkTypeConvertor(NetworkInterfaceType netType){
+    string result;
+    switch ( netType )
+      {
+       case NetworkInterfaceType::LAN :
+            result = "lan";
+            break;
+        case NetworkInterfaceType::WLAN :
+            result = "wlan";
+            break;
+        case NetworkInterfaceType::OPENVPN :
+            result = "openvpn";
+            break;
+        case NetworkInterfaceType::WIREGUARD :
+            result = "wireguard";
+            break;
+        case NetworkInterfaceType::PPTP :
+            result = "pptp";
+            break;
+        case NetworkInterfaceType::TOR :
+            result = "tor";
+            break;
+        default:
+            result = "other";
+      } 
+      return result;
+}
 
 
 string NetworkParam::toString(){
-    
+    string s =  this->getName() + " ,"+
+                this->getType() + " ,"+
+                this->getMac() + " ,"+
+                this->getIP4().ip + " ,"+
+                this->getIP4().extIp + " ,"+
+                this->getIP4().gateway+" '"+
+                this->getIP6().ip + " ,"+
+                this->getIP6().extIp + " ,"+
+                this->getIP6().gateway+" '";
+    return s;    
 }

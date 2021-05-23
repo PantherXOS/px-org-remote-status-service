@@ -7,11 +7,12 @@
 using namespace std;
 
 #include <string>
+#include <vector>
 #include "CpuParams.h"
 #include "MemoryParams.h"
 #include "DiskParams.h"
 #include "GeneralParams.h"
-#include <vector>
+#include "NetworkParam.h"
 
 
 class StatsParam {
@@ -20,7 +21,12 @@ public:
  MemoryParams memoryParams,swapParams;
  vector<DiskParams> diskParams;
  GeneralParams generalParams;
- string toString(){
+ vector<NetworkParam> networkParamList;
+ string toString(){ 
+     string networkRes ;
+     for(auto net : networkParamList ){
+         networkRes += net.toString() + " ";
+     }
      return cpuParams.toString()+
             memoryParams.toString()+
             swapParams.toString()+

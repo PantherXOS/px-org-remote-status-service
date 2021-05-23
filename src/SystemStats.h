@@ -29,14 +29,16 @@ protected:
 
 private:
     vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
-
     void monitStatusParser(string status,StatsParam&  statParam);
     string monitStatusGetValue (string status,string key);
     void diskStatusParser(string status, vector<DiskParams> &diskStatus);
+    vector<NetworkParam> networkParamsParser();
     string exec(const char* cmd);
 
 private:
     std::string m_monitRCPath;
+    void stringSeprator(std::string source,std::string seprator,vector<string> &resultList);
+    NetworkParam deviceParamsParser(std::string data, std::string device);
 };
 
 

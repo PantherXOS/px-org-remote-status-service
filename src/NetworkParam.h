@@ -9,13 +9,13 @@
 #include "NetworkAddress.h"
 
 enum NetworkInterfaceType {
-  OTHER = 'other',
-  WLAN = 'wlan',
-  LAN = 'lan',
-  OPENVPN = 'openvpn',
-  WIREGUARD = 'wireguard',
-  PPTP = 'pptp',
-  TOR = 'tor',
+  OTHER,
+  WLAN,
+  LAN,
+  OPENVPN,
+  WIREGUARD,
+  PPTP,
+  TOR,
 };
 
 
@@ -31,7 +31,7 @@ public:
     bool  isActive();
     
     void    setType(NetworkInterfaceType type);
-    NetworkInterfaceType  getType();
+    string  getType();
 
     void    setIP4(NetworkAddress type);
     NetworkAddress  getIP4();
@@ -39,15 +39,16 @@ public:
     void    setIP6(NetworkAddress type);
     NetworkAddress  getIP6();
     
-
+    string networkTypeConvertor(NetworkInterfaceType netType);
 
 
     string toString();
 
 private:
-    string name,mac;
+    string name;
+    string mac;
     bool active;
-    NetworkInterfaceType type;
+    string type;
     NetworkAddress  ip4;
     NetworkAddress  ip6;
 };

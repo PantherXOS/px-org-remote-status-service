@@ -118,6 +118,7 @@ StatsParam SystemStats::get(const AppConfig &cfg) {
     string disk = UTILS::COMMAND::Execute("df -h |grep ^/dev/sd");
     diskStatusParser(disk, statsParam.diskParams);
     GLOG_INF("Status successfully read");
+    statsParam.networkParamList = networkParamsParser();
     return statsParam;
 }
 
@@ -188,6 +189,27 @@ bool SystemStats::runMonitProcess() {
     return true;
 }
 
+vector<NetworkParam> SystemStats::networkParamsParser( ){
+    vector<NetworkParam> netParList;
+    string devCommand = "nmcli -m tabular --terse device";  
+    string line, found;
+    found = UTILS::COMMAND::Execute(devCommand.c_str());
+    istringstream stream{found};
+    while (std::getline(stream, line)) {
+         vector<string> devices;
+        stringSeprator(line, ":", devices);
+        if(devices.at(0) != "lo"){
+            string netParamCommand ="nmcli --terse device show "+devices.at(0);
+            string res = UTILS::COMMAND::Execute(netParamCommand.c_str());
+            NetworkParam netParam;
+            netParam = deviceParamsParser(res, devices.at(0));
+            GLOG_INF("Device information parsed succsessfully");
+            netParList.push_back(netParam);
+        }
+    }
+    return netParList;
+}
+
 string SystemStats::exec(const char* cmd) {
     std::array<char, 128> buffer;
     std::string result;
@@ -199,4 +221,74 @@ string SystemStats::exec(const char* cmd) {
         result += buffer.data();
     }
     return result;
+}
+
+void SystemStats::stringSeprator(std::string source,std::string seprator,vector<string> &resultList){
+    size_t pos = 0;
+    string token;
+    while ((pos = source.find(seprator)) != std::string::npos) {
+        token = source.substr(0, pos);
+        resultList.push_back(token);
+        source.erase(0, pos + seprator.length());
+    }
+    resultList.push_back(source);
+}
+
+NetworkParam SystemStats::deviceParamsParser(std::string data, std::string device){
+    NetworkParam networkParam;
+    NetworkAddress IP4;
+    NetworkAddress IP6;
+    size_t pos = 0;
+    string line;
+    istringstream stream{data};
+    while (std::getline(stream, line)) {
+        vector<string> params;
+        stringSeprator(line,":",params);
+        if(params.at(0).find("TYPE")!= string::npos){
+            if(params.at(1)== "wifi")
+                networkParam.setType(NetworkInterfaceType::WLAN);
+            else if (params.at(1)== "ethernet") 
+                 networkParam.setType(NetworkInterfaceType::LAN);  
+            else if(params.at(1)== "tun")
+                networkParam.setType(NetworkInterfaceType::OPENVPN);
+        }else if(params.at(0).find("HWADDR")!= string::npos){
+            std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
+            networkParam.setMac(UTILS::COMMAND::Execute(macCommand.c_str()));
+        }else if(params.at(0).find("STATE")!= string::npos){
+            if (params.at(1)== "100") 
+                networkParam.setActive(true);
+            else
+                networkParam.setActive(false);
+        }else if(params.at(0).find("CONNECTION")!= string::npos){
+                networkParam.setName(params.at(1));
+        }else if(params.at(0).find("IP4.ADDRESS[1]")!= string::npos){
+            IP4.ip = params.at(1);
+        }else if(params.at(0).find("IP4.GATEWAY")!= string::npos){
+            IP4.gateway = params.at(1);
+        }else if(params.at(0).find("IP4.DNS")!= string::npos){
+            IP4.dns.push_back(params.at(1));
+        }else if(params.at(0).find("IP4.DNS")!= string::npos){
+            IP4.dns.push_back(params.at(1));
+        }                        
+
+    }
+    string cmd = "curl https://my-ip.pantherx.org/";
+    IP4.extIp = UTILS::COMMAND::Execute(cmd.c_str());
+    networkParam.setIP4(IP4);
+    string addCmd = "nmcli --terse device show "+device+" | grep \"IP6.ADDRESS\\[1\\]\"  | cut -f 2,3,4,5,6,7 -d \":\"";
+    IP6.ip = UTILS::COMMAND::Execute(addCmd.c_str());
+    addCmd = "nmcli --terse device show "+device+" | grep IP6.GATEWAY | cut -f 2,3,4,5,6,7,8 -d \":\"";
+    IP6.gateway = UTILS::COMMAND::Execute(addCmd.c_str());
+    addCmd = "nmcli --terse device show "+device+" | grep IP6.DNS | cut -f 2,3,4,5,6,7 -d \":\"";
+    string dns = UTILS::COMMAND::Execute(addCmd.c_str());
+    if(!dns.empty()){
+        istringstream st{dns};
+        string li;
+        while (std::getline(st, li)) {
+            IP6.dns.push_back(li);
+        }
+    }
+    IP6.extIp = IP4.extIp;
+    networkParam.setIP6(IP6);
+    return networkParam;
 }

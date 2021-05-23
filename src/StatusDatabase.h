@@ -19,6 +19,7 @@
 #include "CpuParams.h"
 #include "MemoryParams.h"
 #include "DiskParams.h"
+#include "NetworkParam.h"
 #include "Logger.h"
 
 #define MAX_TABLE_RECORD 100
@@ -51,6 +52,9 @@ public:
     bool readDiskStats(vector<DiskParams> &resultDiskStats, int gid);
     int insertDiskStats(vector<DiskParams> diskStats, int gid);
 
+    bool readNetworkParams(vector<NetworkParam> &resultNetworkParams, int gid);
+    int insertNetworkParams(vector<NetworkParam> networkParams, int gid);
+
     bool readSwapStats(MemoryParams &resultSwapStats, int gid);
     int insertSwaptStats(MemoryParams swapStats, int gid);
     int generalId();
@@ -75,6 +79,8 @@ private:
                     "CREATE TABLE IF NOT EXISTS swap (id INTEGER PRIMARY KEY, swapUsed REAL,swapUsage REAL,gid INTEGER)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL,gid INTEGER)");
+            mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS network (id INTEGER PRIMARY KEY, name TEXT , mac TEXT, type Text, active INTEGER, ip4_ip TEXT, ip4_extip TEXT, ip4_dns Text,ip6_ip TEXT, ip6_extip TEXT, ip6_dns Text,gid INTEGER)");        
             }
         catch (std::exception& e)
         {
