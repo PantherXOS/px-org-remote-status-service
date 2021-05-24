@@ -32,6 +32,10 @@ void    NetworkParam::setType(NetworkInterfaceType type){
     this->type = networkTypeConvertor(type);
 }
 
+void    NetworkParam::setDbType(string type){
+    this->type = type;
+}
+
 string  NetworkParam::getType(){
     return this->type;   
 }
@@ -42,6 +46,19 @@ void    NetworkParam::setIP4(NetworkAddress ip){
 
 NetworkAddress  NetworkParam::getIP4(){
         return this->ip4;
+}
+
+string  NetworkParam::getDbDns(vector<string> inputDns){
+    string dns;
+    //NetworkAddress ipv4 = inputDns;
+    for(int i=0;i<inputDns.size();i++){
+        if(i!=(inputDns.size()-1))
+            dns += inputDns.at(i)+",";
+        else
+            dns += inputDns.at(i);
+    } 
+    GLOG_INF("XXXXXXXXXXXXXXXXXXX dns"+dns); 
+    return dns; 
 }
 
 void    NetworkParam::setIP6(NetworkAddress ip){

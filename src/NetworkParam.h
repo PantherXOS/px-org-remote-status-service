@@ -32,9 +32,11 @@ public:
     
     void    setType(NetworkInterfaceType type);
     string  getType();
+    void    setDbType(string type);
 
     void    setIP4(NetworkAddress type);
-    NetworkAddress  getIP4();
+    NetworkAddress  getIP4(); 
+    string getDbDns(vector<string> inputDns);  
 
     void    setIP6(NetworkAddress type);
     NetworkAddress  getIP6();

@@ -30,7 +30,7 @@ using namespace SQLite;
 
 class StatusDatabase {
 
-#define DB_NAME "status-database"
+#define DB_NAME "/status-database"
 #define USER_DATA "/.local"
 #define SHARE "/share"
 #define STATUS_DATA "/px-org-remote-status-service"
@@ -64,6 +64,8 @@ public:
 
     void deletLastStat();
 
+    void stringSeprator(std::string source,std::string seprator,vector<string> &resultList);
+
 private:
     StatusDatabase() :
             mDb(string(getpwuid(getuid())->pw_dir) + DB_PATH+DB_NAME,SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)
@@ -80,7 +82,7 @@ private:
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL,gid INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS network (id INTEGER PRIMARY KEY, name TEXT , mac TEXT, type Text, active INTEGER, ip4_ip TEXT, ip4_extip TEXT, ip4_dns Text,ip6_ip TEXT, ip6_extip TEXT, ip6_dns Text,gid INTEGER)");        
+                    "CREATE TABLE IF NOT EXISTS network (id INTEGER PRIMARY KEY, name TEXT , mac TEXT, type Text, active INTEGER, ip4_ip TEXT, ip4_extip TEXT,ip4_gateway TEXT, ip4_dns Text,ip6_ip TEXT, ip6_extip TEXT, ip6_gateway TEXT,ip6_dns Text,gid INTEGER)");        
             }
         catch (std::exception& e)
         {

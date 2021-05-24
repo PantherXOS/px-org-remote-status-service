@@ -11,7 +11,7 @@ StatusDatabase & StatusDatabase::instance() {
     mkdir(path.c_str(),0755);
     path += STATUS_DATA;
     mkdir(path.c_str(),0755);
-
+    GLOG_INF("PPPPPPPPAAAAAAAATTTTTTTTHHHHHHHHH: "+path);
     static StatusDatabase instance;
     return instance;
 }
@@ -322,15 +322,23 @@ bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams
 
         while (query.executeStep()) {
             hasResult = true;
+            NetworkAddress IPv4;
+            NetworkAddress IPv6;
             networkParam.setName(query.getColumn("name"));
             networkParam.setMac(query.getColumn("mac"));
-            // networkParam.setType(query.getColumn("type"));
-            // diskParams.setUsage(query.getColumn("usage").getDouble());
-            // diskParams.setUsed(query.getColumn("used").getDouble());
-            // resultDiskStats.push_back(diskParams);
+            networkParam.setDbType(query.getColumn("type"));
+            IPv4.ip = query.getColumn("ip4_ip").getString();
+            IPv4.extIp = query.getColumn("ip4_extip").getString();
+            stringSeprator(query.getColumn("ip4_dns").getString(),",", IPv4.dns);
+            networkParam.setIP4(IPv4);
+            IPv6.ip = query.getColumn("ip6_ip").getString();
+            IPv6.extIp = query.getColumn("ip6_extip").getString();
+            stringSeprator(query.getColumn("ip6_dns").getString(),",", IPv6.dns);
+            networkParam.setIP6(IPv6);
+            networkParam.setActive(query.getColumn("active").getInt());      
         }
         // Reset the query to use it again
-        query.reset();
+        query.reset();        
     }
     catch(std::exception& e)
     {
@@ -351,11 +359,11 @@ int StatusDatabase::insertNetworkParams(vector<NetworkParam> networkParams, int 
                                                 net.getIP4().ip + "\",\"" +
                                                 net.getIP4().extIp + "\",\"" +
                                                 net.getIP4().gateway + "\",\"" +
-                                                //net.getIP4().dns + "\",\"" +
+                                                net.getDbDns(net.getIP4().dns)+ "\",\"" +
                                                 net.getIP6().ip + "\",\"" +
                                                 net.getIP6().extIp + "\",\"" +
                                                 net.getIP6().gateway + "\",\"" +                                 
-                                                //net.getIP6().dns + "\",\"" + 
+                                                net.getDbDns(net.getIP6().dns) + "\",\"" + 
                                                 to_string(gid) + "\")");
             if (res == 0)
                 return -2;
@@ -374,6 +382,17 @@ int StatusDatabase::insertNetworkParams(vector<NetworkParam> networkParams, int 
     }
     return 0;
 
+}
+
+void StatusDatabase::stringSeprator(std::string source,std::string seprator,vector<string> &resultList){
+    size_t pos = 0;
+    string token;
+    while ((pos = source.find(seprator)) != std::string::npos) {
+        token = source.substr(0, pos);
+        resultList.push_back(token);
+        source.erase(0, pos + seprator.length());
+    }
+    resultList.push_back(source);
 }
 
 
