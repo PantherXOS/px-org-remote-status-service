@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - Adding Network information data
 - Put network data in DB
-
+- Update Json builder(add network data)
 
 ## [0.1.9] - 2021-05-
 ### Changes

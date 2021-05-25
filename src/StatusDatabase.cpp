@@ -313,14 +313,14 @@ void StatusDatabase::deletLastStat() {
 }
 
 bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams, int gid){
-    NetworkParam networkParam;
+    
     resultNetworkParams.clear();
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM network WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC ");
-
+        SQLite::Statement query(mDb, " SELECT * FROM network WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC ");        
         while (query.executeStep()) {
+            NetworkParam networkParam;
             hasResult = true;
             NetworkAddress IPv4;
             NetworkAddress IPv6;
@@ -336,6 +336,7 @@ bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams
             stringSeprator(query.getColumn("ip6_dns").getString(),",", IPv6.dns);
             networkParam.setIP6(IPv6);
             networkParam.setActive(query.getColumn("active").getInt());      
+            resultNetworkParams.push_back(networkParam);
         }
         // Reset the query to use it again
         query.reset();        

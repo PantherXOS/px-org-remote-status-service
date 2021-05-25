@@ -96,50 +96,58 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
             }
         Hardware.AddMember("disks", disks, alloc);
     }
-    Document d2;
-    d2.SetObject();
-    rapidjson::Value Network(rapidjson::kObjectType);
-        {
-        Value networks(kArrayType);
+
+    
+    Value networks(kArrayType);
+        {        
         for(auto n : statsParam.networkParamList){
             Value network(kObjectType);
-            //Value name;
-           // name.SetString(StringRef(d.getName().c_str()));
-            network.AddMember("name", n.getName(), d2.GetAllocator());
-            network.AddMember("mac", n.getMac(), d2.GetAllocator());
-            network.AddMember("type", n.getType(), d2.GetAllocator());
-            // rapidjson::Value ipv4(rapidjson::kObjectType);
-            //     ipv4.AddMember("ip", n.getIP4().ip, allocator);
-            //     ipv4.AddMember("extip",n.getIP4().extIp , allocator);
-            //     ipv4.AddMember("gateway", n.getIP4().gateway, allocator);
-                // Value dns4(kArrayType);
-                // for(auto dn : n.getIP4().dns){
-                //     ipv4.AddMember("dns",dn , allocator);
-                //      dns4.PushBack(dn,alloc);
-                // }
-                // ipv4.AddMember("dns",dns4,alloc);
-            // network.AddMember("ip4",ipv4,alloc);
-            // rapidjson::Value ipv6(rapidjson::kObjectType);
-            //     ipv6.AddMember("ip", n.getIP6().ip, allocator);
-            //     ipv6.AddMember("extip",n.getIP6().extIp , allocator);
-            //     ipv6.AddMember("gateway", n.getIP6().gateway, allocator);
-                // Value dns6(kArrayType);
-                // for(auto dn : n.getIP6().dns){
-                //     ipv6.AddMember("dns",dn , allocator);
-                //     dns6.PushBack(dn,alloc);
-                // }
-                // ipv6.AddMember("dns",dns6,alloc);
-            // network.AddMember("ip6",ipv6,alloc);
+            Value name,type,mac;
+            GLOG_INF(" name: "+n.getName()+" mac: "+n.getMac()+" type: "+n.getType());
+        //    name.SetString(StringRef(n.getName().c_str()));
+        //    type.SetString(StringRef(n.getType().c_str()));
+        //    mac.SetString(StringRef(n.getMac().c_str()));
+           network.AddMember("name", StringRef(n.getName().c_str()), allocator);
+           network.AddMember("mac", StringRef(n.getMac().c_str()), allocator);
+           network.AddMember("type", StringRef(n.getType().c_str()), allocator);
+            rapidjson::Value ipv4(rapidjson::kObjectType);
+            {
+                ipv4.AddMember("ip", StringRef(n.getIP4().ip.c_str()), allocator);
+                ipv4.AddMember("extip",StringRef(n.getIP4().extIp.c_str()) , allocator);
+                ipv4.AddMember("gateway", StringRef(n.getIP4().gateway.c_str()), allocator);
+                Value dns4List(kArrayType);
+                {
+                    for(auto dn : n.getIP4().dns){
+                        dns4List.PushBack(StringRef(dn.c_str()) , allocator);
+                    }
+                }
+                ipv4.AddMember("dns",dns4List,alloc);
+            }
+            network.AddMember("ip4",ipv4,alloc);
+            rapidjson::Value ipv6(rapidjson::kObjectType);
+            {
+                ipv6.AddMember("ip", StringRef(n.getIP6().ip.c_str()), allocator);
+                ipv6.AddMember("extip",StringRef(n.getIP6().extIp.c_str()) , allocator);
+                ipv6.AddMember("gateway", StringRef(n.getIP6().gateway.c_str()), allocator);
+                Value dns6(kArrayType);
+                {
+                    for(auto dn : n.getIP6().dns){
+                        dns6.PushBack(StringRef(dn.c_str()),alloc);
+                    }
+                }
+                ipv6.AddMember("dns",dns6,alloc);
+            }
+            network.AddMember("ip6",ipv6,alloc);
 
-            network.AddMember("active", n.isActive(), alloc);
-            networks.PushBack(network, d2.GetAllocator());
+            network.AddMember("active", n.isActive(), allocator);
+            networks.PushBack(network, allocator);
         }
-        Network.AddMember(" ", networks, alloc);
+       //Network.AddMember(" ",networks, alloc);
     }
 
     document.AddMember("boot_time", statsParam.generalParams.getBootTime(), allocator);
     document.AddMember("firmware", "TODO", allocator);
-    document.AddMember("network", Network, allocator);
+    document.AddMember("network", networks, allocator);
     document.AddMember("hardware", Hardware, allocator);
     document.AddMember("system", system, allocator);
 
