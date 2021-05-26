@@ -103,8 +103,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
         for(auto n : statsParam.networkParamList){
             Value network(kObjectType);
             Value name,type,mac;
-            GLOG_INF(" name: "+n.getName()+" mac: "+n.getMac()+" type: "+n.getType());
-           name.SetString(StringRef(n.getName().c_str()));
+           name.SetString(n.getName().c_str(),allocator);
            type.SetString(n.getType().c_str(),allocator);
            mac.SetString(n.getMac().c_str(),allocator);
            network.AddMember("name", name, allocator);

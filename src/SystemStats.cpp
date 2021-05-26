@@ -251,6 +251,9 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
                  networkParam.setType(NetworkInterfaceType::LAN);  
             else if(params.at(1)== "tun")
                 networkParam.setType(NetworkInterfaceType::OPENVPN);
+            else
+                networkParam.setType(NetworkInterfaceType::OTHER);
+
         }else if(params.at(0).find("HWADDR")!= string::npos){
             std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
             networkParam.setMac(UTILS::COMMAND::Execute(macCommand.c_str()));
