@@ -104,21 +104,27 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
             Value network(kObjectType);
             Value name,type,mac;
             GLOG_INF(" name: "+n.getName()+" mac: "+n.getMac()+" type: "+n.getType());
-        //    name.SetString(StringRef(n.getName().c_str()));
-        //    type.SetString(StringRef(n.getType().c_str()));
-        //    mac.SetString(StringRef(n.getMac().c_str()));
-           network.AddMember("name", StringRef(n.getName().c_str()), allocator);
-           network.AddMember("mac", StringRef(n.getMac().c_str()), allocator);
-           network.AddMember("type", StringRef(n.getType().c_str()), allocator);
+           name.SetString(StringRef(n.getName().c_str()));
+           type.SetString(n.getType().c_str(),allocator);
+           mac.SetString(n.getMac().c_str(),allocator);
+           network.AddMember("name", name, allocator);
+           network.AddMember("mac", mac, allocator);
+           network.AddMember("type", type, allocator);
             rapidjson::Value ipv4(rapidjson::kObjectType);
             {
-                ipv4.AddMember("ip", StringRef(n.getIP4().ip.c_str()), allocator);
-                ipv4.AddMember("extip",StringRef(n.getIP4().extIp.c_str()) , allocator);
-                ipv4.AddMember("gateway", StringRef(n.getIP4().gateway.c_str()), allocator);
+                Value _ipv4_ip, _ipv4_extip, _ipv4_gatevay;
+                _ipv4_ip.SetString(n.getIP4().ip.c_str(),allocator);
+                _ipv4_extip.SetString(n.getIP4().extIp.c_str(),allocator);
+                _ipv4_gatevay.SetString(n.getIP4().gateway.c_str(),allocator);
+                ipv4.AddMember("ip", _ipv4_ip, allocator);
+                ipv4.AddMember("extip",_ipv4_extip , allocator);
+                ipv4.AddMember("gateway", _ipv4_gatevay, allocator);
                 Value dns4List(kArrayType);
                 {
                     for(auto dn : n.getIP4().dns){
-                        dns4List.PushBack(StringRef(dn.c_str()) , allocator);
+                       Value _dns;
+                       _dns.SetString(dn.c_str(),allocator);
+                        dns4List.PushBack(_dns , allocator);
                     }
                 }
                 ipv4.AddMember("dns",dns4List,alloc);
@@ -126,19 +132,24 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
             network.AddMember("ip4",ipv4,alloc);
             rapidjson::Value ipv6(rapidjson::kObjectType);
             {
-                ipv6.AddMember("ip", StringRef(n.getIP6().ip.c_str()), allocator);
-                ipv6.AddMember("extip",StringRef(n.getIP6().extIp.c_str()) , allocator);
-                ipv6.AddMember("gateway", StringRef(n.getIP6().gateway.c_str()), allocator);
+                Value _ipv6_ip, _ipv6_extip, _ipv6_gatevay;
+                _ipv6_ip.SetString(n.getIP6().ip.c_str(),allocator);
+                _ipv6_extip.SetString(n.getIP6().extIp.c_str(),allocator);
+                _ipv6_gatevay.SetString(n.getIP6().gateway.c_str(),allocator);
+                ipv6.AddMember("ip", _ipv6_ip, allocator);
+                ipv6.AddMember("extip", _ipv6_extip, allocator);
+                ipv6.AddMember("gateway", _ipv6_gatevay, allocator);
                 Value dns6(kArrayType);
                 {
                     for(auto dn : n.getIP6().dns){
-                        dns6.PushBack(StringRef(dn.c_str()),alloc);
+                        Value _dns;
+                       _dns.SetString(dn.c_str(),allocator);
+                        dns6.PushBack(_dns, alloc);
                     }
                 }
                 ipv6.AddMember("dns",dns6,alloc);
             }
             network.AddMember("ip6",ipv6,alloc);
-
             network.AddMember("active", n.isActive(), allocator);
             networks.PushBack(network, allocator);
         }

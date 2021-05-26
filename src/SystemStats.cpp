@@ -255,10 +255,14 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
             std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
             networkParam.setMac(UTILS::COMMAND::Execute(macCommand.c_str()));
         }else if(params.at(0).find("STATE")!= string::npos){
-            if (params.at(1)== "100") 
+            if ((params.at(1).find("100"))!= string::npos) {
                 networkParam.setActive(true);
-            else
+                networkParam.connectionStatus = 100;
+            }
+            else{
                 networkParam.setActive(false);
+                networkParam.connectionStatus = 200;
+            }
         }else if(params.at(0).find("CONNECTION")!= string::npos){
                 networkParam.setName(params.at(1));
         }else if(params.at(0).find("IP4.ADDRESS[1]")!= string::npos){

@@ -11,7 +11,6 @@ StatusDatabase & StatusDatabase::instance() {
     mkdir(path.c_str(),0755);
     path += STATUS_DATA;
     mkdir(path.c_str(),0755);
-    GLOG_INF("PPPPPPPPAAAAAAAATTTTTTTTHHHHHHHHH: "+path);
     static StatusDatabase instance;
     return instance;
 }
@@ -335,7 +334,14 @@ bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams
             IPv6.extIp = query.getColumn("ip6_extip").getString();
             stringSeprator(query.getColumn("ip6_dns").getString(),",", IPv6.dns);
             networkParam.setIP6(IPv6);
-            networkParam.setActive(query.getColumn("active").getInt());      
+            if(query.getColumn("active").getInt() == 100){
+                networkParam.setActive(true);
+                networkParam.connectionStatus = 100;
+            }
+            else{
+                networkParam.setActive(false);
+                 networkParam.connectionStatus = 200;
+            }
             resultNetworkParams.push_back(networkParam);
         }
         // Reset the query to use it again
@@ -349,14 +355,14 @@ bool StatusDatabase::readNetworkParams(vector<NetworkParam> &resultNetworkParams
 }
 
 
-int StatusDatabase::insertNetworkParams(vector<NetworkParam> networkParams, int gid){
+int StatusDatabase::insertNetworkParams(vector<NetworkParam> networkParams, int gid){    
         for(auto net : networkParams) {
         try {
             int res = this->mDb.exec("INSERT INTO network VALUES (NULL,\"" +
                                                 net.getName() + "\",\"" +
                                                 net.getMac() + "\",\"" +
                                                 net.getType() + "\",\"" +
-                                                to_string(net.isActive()) + "\",\"" +
+                                                to_string(net.connectionStatus) + "\",\"" +
                                                 net.getIP4().ip + "\",\"" +
                                                 net.getIP4().extIp + "\",\"" +
                                                 net.getIP4().gateway + "\",\"" +

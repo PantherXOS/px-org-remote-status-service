@@ -42,7 +42,7 @@ public:
     NetworkAddress  getIP6();
     
     string networkTypeConvertor(NetworkInterfaceType netType);
-
+    int connectionStatus;
 
     string toString();
 

@@ -56,8 +56,7 @@ string  NetworkParam::getDbDns(vector<string> inputDns){
             dns += inputDns.at(i)+",";
         else
             dns += inputDns.at(i);
-    } 
-    GLOG_INF("XXXXXXXXXXXXXXXXXXX dns"+dns); 
+    }
     return dns; 
 }
 
