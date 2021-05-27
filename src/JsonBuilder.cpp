@@ -64,6 +64,11 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
     cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
 
+    rapidjson::Value loadAvrage(rapidjson::kObjectType);
+    loadAvrage.AddMember("user", statsParam.cpuParams.getUser(), allocator);
+    loadAvrage.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
+    loadAvrage.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
+
     rapidjson::Value memory(rapidjson::kObjectType);
     memory.AddMember("used", statsParam.memoryParams.getUsed(), allocator);
     memory.AddMember("usage",statsParam.memoryParams.getUsage() , allocator);
@@ -73,9 +78,16 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     swap.AddMember("usage",statsParam.swapParams.getUsage() , allocator);
 
     rapidjson::Value system(rapidjson::kObjectType);
+    Value osVersion;
+    string versionCommand = "guix --version |grep guix | cut -f 4 -d \" \"";
+    string version =UTILS::COMMAND::Execute(versionCommand.c_str());
+    version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
+    osVersion.SetString(version.c_str(),alloc);
     Value sys;
+    
     sys.SetString(StringRef(statsParam.generalParams.getSystem().c_str()));
-    system.AddMember("system", "TODO" , allocator);
+    system.AddMember("osVersion", osVersion , allocator);
+    system.AddMember("loadAverage", loadAvrage, allocator);
     //system.AddMember("upTime", statsParam.generalParams.getUpTime(), allocator);
     system.AddMember("cpu", cpu, allocator);
     system.AddMember("memory",memory , allocator);
@@ -103,6 +115,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
         for(auto n : statsParam.networkParamList){
             Value network(kObjectType);
             Value name,type,mac;
+            version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
            name.SetString(n.getName().c_str(),allocator);
            type.SetString(n.getType().c_str(),allocator);
            mac.SetString(n.getMac().c_str(),allocator);
@@ -164,6 +177,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
 
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
+    writer.SetMaxDecimalPlaces(2);
     document.Accept(writer);
 
     return strbuf;
@@ -202,6 +216,7 @@ StringBuffer JsonBuilder::event(vector<EventObject> eventObject) {
 
     return strbuf;
 }
+
 
 
 

@@ -256,7 +256,9 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
 
         }else if(params.at(0).find("HWADDR")!= string::npos){
             std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
-            networkParam.setMac(UTILS::COMMAND::Execute(macCommand.c_str()));
+            string mac = UTILS::COMMAND::Execute(macCommand.c_str());
+            mac.erase(std::remove(mac.begin(), mac.end(), '\n'), mac.end());
+            networkParam.setMac(mac);
         }else if(params.at(0).find("STATE")!= string::npos){
             if ((params.at(1).find("100"))!= string::npos) {
                 networkParam.setActive(true);
@@ -281,17 +283,21 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
     }
     string cmd = "curl https://my-ip.pantherx.org/";
     IP4.extIp = UTILS::COMMAND::Execute(cmd.c_str());
+    IP4.extIp.erase(std::remove(IP4.extIp.begin(), IP4.extIp.end(), '\n'), IP4.extIp.end());
     networkParam.setIP4(IP4);
     string addCmd = "nmcli --terse device show "+device+" | grep \"IP6.ADDRESS\\[1\\]\"  | cut -f 2,3,4,5,6,7 -d \":\"";
     IP6.ip = UTILS::COMMAND::Execute(addCmd.c_str());
+    IP6.ip.erase(std::remove(IP6.ip.begin(), IP6.ip.end(), '\n'), IP6.ip.end());
     addCmd = "nmcli --terse device show "+device+" | grep IP6.GATEWAY | cut -f 2,3,4,5,6,7,8 -d \":\"";
     IP6.gateway = UTILS::COMMAND::Execute(addCmd.c_str());
+    IP6.gateway.erase(std::remove(IP6.gateway.begin(), IP6.gateway.end(), '\n'), IP6.gateway.end());
     addCmd = "nmcli --terse device show "+device+" | grep IP6.DNS | cut -f 2,3,4,5,6,7 -d \":\"";
     string dns = UTILS::COMMAND::Execute(addCmd.c_str());
-    if(!dns.empty()){
+    if(!dns.empty()){        
         istringstream st{dns};
         string li;
         while (std::getline(st, li)) {
+            li.erase(std::remove(li.begin(), li.end(), '\n'), li.end());
             IP6.dns.push_back(li);
         }
     }
