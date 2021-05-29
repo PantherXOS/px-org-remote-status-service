@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding some debug prints
 - Adding syslog
 - Adding network params
+- Adding load Avereage params
 
 ## [0.1.6] - 2021-05-06
 ### Changes

@@ -65,9 +65,9 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
 
     rapidjson::Value loadAvrage(rapidjson::kObjectType);
-    loadAvrage.AddMember("user", statsParam.cpuParams.getUser(), allocator);
-    loadAvrage.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
-    loadAvrage.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
+    loadAvrage.AddMember("user", statsParam.loadAverage.getUser(), allocator);
+    loadAvrage.AddMember("system",statsParam.loadAverage.getSystem() , allocator);
+    loadAvrage.AddMember("wait", statsParam.loadAverage.getWait(), allocator);
 
     rapidjson::Value memory(rapidjson::kObjectType);
     memory.AddMember("used", statsParam.memoryParams.getUsed(), allocator);

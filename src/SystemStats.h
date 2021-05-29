@@ -28,7 +28,7 @@ protected:
     bool runMonitProcess();
 
 private:
-    vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time"};
+    vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time","load average"};
     void monitStatusParser(string status,StatsParam&  statParam);
     string monitStatusGetValue (string status,string key);
     void diskStatusParser(string status, vector<DiskParams> &diskStatus);

@@ -101,6 +101,23 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             }
             token = st.substr(0, st.size() - 3);
             statParam.cpuParams.setWait(atof(token.c_str()));
+        } else if (key == "load average") {
+            string delimiter = " ";
+            size_t pos = 0;
+            string token;
+            string st = monitStatusGetValue(status, key);
+            int count = 0;
+            while ((pos = st.find(delimiter)) != std::string::npos) {
+                token = st.substr(1, pos-2);
+                if (count == 0)
+                    statParam.loadAverage.setUser(atof(token.c_str()));
+                else if (count == 1)
+                    statParam.loadAverage.setSystem(atof(token.c_str()));
+                ++count;
+                st.erase(0, pos + delimiter.length());
+            }
+            token = st.substr(1, st.size()-2);
+            statParam.loadAverage.setWait(atof(token.c_str()));
         }
     }
 }

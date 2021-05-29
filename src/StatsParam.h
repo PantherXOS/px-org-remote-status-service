@@ -18,6 +18,7 @@ using namespace std;
 class StatsParam {
 public:
  CpuParams cpuParams;
+ CpuParams loadAverage;
  MemoryParams memoryParams,swapParams;
  vector<DiskParams> diskParams;
  GeneralParams generalParams;
@@ -28,6 +29,7 @@ public:
          networkRes += net.toString() + " ";
      }
      return cpuParams.toString()+
+            loadAverage.toString()+
             memoryParams.toString()+
             swapParams.toString()+
             generalParams.toString();
