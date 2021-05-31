@@ -41,9 +41,27 @@ int GeneralParams::getBootTime() {
     return this->bootTime;
 }
 
+void GeneralParams::setcpuUsed(float used){
+    this->cpuUsed = used;
+}    
+void GeneralParams::setcpuUsage(float usage){
+    this->cpuUsage = usage;
+}
+
+float GeneralParams::getcpuUsed(){
+    return this->cpuUsed;
+}
+
+float GeneralParams::getcpuUsage(){
+    return this->cpuUsage;
+}
+
+
 string GeneralParams::toString() {
     return  "system   : " + system + "\n" +
             "version  : " + version + "\n" +
             "upTime   : " + to_string(upTime)  + "\n" +
+            "Cpu Usage   : " + to_string(cpuUsage)  + "\n" +
+            "Cpu Used   : " + to_string(cpuUsed)  + "\n" +
             "bootTime : " + to_string(bootTime)+ "\n";
 }

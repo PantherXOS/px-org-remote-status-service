@@ -26,8 +26,13 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
         GLOG_INF("systemStatsKeys parser, key = "+key);
         if (key == "System")
             statParam.generalParams.setSystem(monitStatusGetValue(status, key));
-        else if (key == "version")
-            statParam.generalParams.setVersion("NOT Exist/ TODO");
+        else if (key == "version"){
+            //statParam.generalParams.setVersion("NOT Exist/ TODO");
+            string versionCommand = "guix --version |grep guix | cut -f 4 -d \" \"";
+            string version =UTILS::COMMAND::Execute(versionCommand.c_str());
+            version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
+            statParam.generalParams.setVersion(version);
+        }
         else if (key == "uptime")
             statParam.generalParams.setUpTime(atoi(monitStatusGetValue(status, key).c_str()));
         else if (key == "boot time")
@@ -85,22 +90,31 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             token = st.substr(1, st.size() - 2);
             statParam.swapParams.setUsage(atof(token.c_str()));
         } else if (key == "cpu") {
-            string delimiter = " ";
-            size_t pos = 0;
-            string token;
-            string st = monitStatusGetValue(status, key);
-            int count = 0;
-            while ((pos = st.find(delimiter)) != std::string::npos) {
-                token = st.substr(0, pos - 3);
-                if (count == 0)
-                    statParam.cpuParams.setUser(atof(token.c_str()));
-                else if (count == 1)
-                    statParam.cpuParams.setSystem(atof(token.c_str()));
-                ++count;
-                st.erase(0, pos + delimiter.length());
-            }
-            token = st.substr(0, st.size() - 3);
-            statParam.cpuParams.setWait(atof(token.c_str()));
+            // string delimiter = " ";
+            // size_t pos = 0;
+            // string token;
+            // string st = monitStatusGetValue(status, key);
+            // int count = 0;
+            // while ((pos = st.find(delimiter)) != std::string::npos) {
+            //     token = st.substr(0, pos - 3);
+            //     if (count == 0)
+            //         statParam.cpuParams.setUser(atof(token.c_str()));
+            //     else if (count == 1)
+            //         statParam.cpuParams.setSystem(atof(token.c_str()));
+            //     ++count;
+            //     st.erase(0, pos + delimiter.length());
+            // }
+            // token = st.substr(0, st.size() - 3);
+            // statParam.cpuParams.setWait(atof(token.c_str()));
+            string cpuNumberCommand = "lscpu |grep \"^CPU(s):\" | tr -d \" \" | cut -f 2 -d \":\"";
+            string cpuNumber =UTILS::COMMAND::Execute(cpuNumberCommand.c_str());
+            string cpuInfoCommand = "mpstat | grep -A 5 \"%idle\" | tail -n 1 | awk -F \" \" '{print 100 -  $ 12}'a";
+            string cpuInfo =UTILS::COMMAND::Execute(cpuInfoCommand.c_str());                       
+            auto use = 100-(stof(cpuInfo.c_str()));            
+            statParam.generalParams.setcpuUsage(use);
+            statParam.generalParams.setcpuUsed(stof(cpuNumber.c_str())*(stof(cpuInfo.c_str())));
+            //version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
+            //statParam.generalParams.setVersion(version);
         } else if (key == "load average") {
             string delimiter = " ";
             size_t pos = 0;

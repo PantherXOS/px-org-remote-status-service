@@ -26,6 +26,8 @@ bool StatusDatabase::readGeneralStats(GeneralParams &resultGeneralStats) {
             resultGeneralStats.setUpTime(query.getColumn("upTime"));
             resultGeneralStats.setSystem(query.getColumn("system"));
             resultGeneralStats.setVersion(query.getColumn("version"));
+            resultGeneralStats.setcpuUsage(query.getColumn("cpuUsage").getDouble());
+            resultGeneralStats.setcpuUsed(query.getColumn("cpuUsed").getDouble());
         }
         // Reset the query to use it again
         query.reset();
@@ -43,7 +45,9 @@ int StatusDatabase::insertGeneralStats(GeneralParams generalStats) {
                                  generalStats.getSystem() + "\",\""+
                                  generalStats.getVersion() + "\",\""+
                                  to_string(generalStats.getUpTime())+ "\",\""+
-                                 to_string(generalStats.getBootTime()) + "\")");
+                                 to_string(generalStats.getBootTime())+ "\",\""+
+                                 to_string(generalStats.getcpuUsage())+ "\",\""+
+                                 to_string(generalStats.getcpuUsed()) + "\")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM general ORDER BY id DESC  LIMIT 1");
@@ -276,6 +280,8 @@ void StatusDatabase::insertAllStats(StatsParam statParams) {
     insertCpuStats(statParams.cpuParams,gid);
     insertDiskStats(statParams.diskParams,gid);
     insertNetworkParams(statParams.networkParamList,gid);
+    insertLoadAverageStats(statParams.loadAverage, gid);
+    
 }
 
 void StatusDatabase::readAllStats(StatsParam &statsParam) {
@@ -286,6 +292,7 @@ void StatusDatabase::readAllStats(StatsParam &statsParam) {
     readSwapStats(statsParam.swapParams, gid);
     readDiskStats(statsParam.diskParams,gid);
     readNetworkParams(statsParam.networkParamList,gid);
+    readLoadAverageStats(statsParam.loadAverage,gid);
 }
 
 void StatusDatabase::deletLastStat() {
@@ -297,12 +304,14 @@ void StatusDatabase::deletLastStat() {
         SQLite::Statement query3(mDb,"DELETE FROM memory WHERE gid="+to_string(gid));
         SQLite::Statement query4(mDb,"DELETE FROM disk WHERE gid="+to_string(gid));
         SQLite::Statement query5(mDb,"DELETE FROM network WHERE gid="+to_string(gid));
+        SQLite::Statement query6(mDb,"DELETE FROM loadAverage WHERE gid="+to_string(gid));
 
         query.reset();
         query1.reset();
         query2.reset();
         query3.reset();
         query4.reset();
+        
     }
     catch(std::exception& e)
     {
@@ -402,4 +411,50 @@ void StatusDatabase::stringSeprator(std::string source,std::string seprator,vect
     resultList.push_back(source);
 }
 
+
+bool StatusDatabase::readLoadAverageStats(CpuParams &resultLoadAveargeStats, int gid) {
+    bool hasResult = false;
+    try {
+        // Compile a SQL query, containing one parameter (index 1)
+        SQLite::Statement query(mDb, " SELECT * FROM loadAverage WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
+        while (query.executeStep()) {
+            hasResult = true;
+            resultLoadAveargeStats.setSystem(query.getColumn("system").getDouble());
+            resultLoadAveargeStats.setUser(query.getColumn("user").getDouble());
+            resultLoadAveargeStats.setWait(query.getColumn("wait").getDouble());
+        }
+        // Reset the query to use it again
+        query.reset();
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+    }
+    return hasResult;
+}
+
+int StatusDatabase::insertLoadAverageStats(CpuParams loadAveargeStats, int gid) {
+    try {
+        int res = this->mDb.exec("INSERT INTO loadAverage VALUES (NULL,"+
+                                 to_string(loadAveargeStats.getUser())+ ","+
+                                 to_string(loadAveargeStats.getSystem())+ ","+
+                                 to_string(loadAveargeStats.getWait()) + ","+
+                                 to_string(gid) + ")");
+        if(res == 0)
+            return -2;
+        SQLite::Statement query(mDb, "SELECT id FROM loadAverage ORDER BY id DESC  LIMIT 1");
+        while (query.executeStep()) {
+            int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
+            if(id>0)
+                this->mDb.exec("DELETE FROM loadAverage WHERE id="+to_string(id));
+        }
+        query.reset();
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+        return -1;
+    }
+    return 0;
+}
 

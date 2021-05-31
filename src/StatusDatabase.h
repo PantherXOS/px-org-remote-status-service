@@ -62,6 +62,9 @@ public:
     void insertAllStats(StatsParam statParams);
     void readAllStats(StatsParam &statsParam);
 
+    bool readLoadAverageStats(CpuParams &resultLoadAveargeStats, int gid);
+    int insertLoadAverageStats(CpuParams loadAveargeStats, int gid);
+
     void deletLastStat();
 
     void stringSeprator(std::string source,std::string seprator,vector<string> &resultList);
@@ -72,7 +75,7 @@ private:
     {
         try {
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER)");
+                    "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER, cpuUsage REAL, cpuUsed REAL)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL,gid INTEGER)");
             mDb.exec(
@@ -83,6 +86,8 @@ private:
                     "CREATE TABLE IF NOT EXISTS disk (id INTEGER PRIMARY KEY, name TEXT , free REAL, total REAL, used REAL, usage REAL,gid INTEGER)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS network (id INTEGER PRIMARY KEY, name TEXT , mac TEXT, type Text, active INTEGER, ip4_ip TEXT, ip4_extip TEXT,ip4_gateway TEXT, ip4_dns Text,ip6_ip TEXT, ip6_extip TEXT, ip6_gateway TEXT,ip6_dns Text,gid INTEGER)");        
+           mDb.exec(
+                    "CREATE TABLE IF NOT EXISTS loadAverage (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL,gid INTEGER)");
             }
         catch (std::exception& e)
         {

@@ -14,6 +14,9 @@ public:
     void setVersion(string version);
     void setUpTime(int upTime);
     void setBootTime(int bootTime);
+    void setcpuUsed(float used);    
+    void setcpuUsage(float usage);
+
 
     string getSystem();
     string getVersion();
@@ -21,11 +24,16 @@ public:
     int getUpTime();
     int getBootTime();
 
+    float getcpuUsed();
+    float getcpuUsage();
+
+
     string toString ();
 
 private:
     string system,version;
     int upTime,bootTime;
+    float cpuUsed,cpuUsage;
 };
 
 

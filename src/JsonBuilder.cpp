@@ -59,10 +59,16 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 
 // create a rapidjson object type
-    rapidjson::Value cpu(rapidjson::kObjectType);
-    cpu.AddMember("user", statsParam.cpuParams.getUser(), allocator);
-    cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
-    cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
+    // rapidjson::Value cpu(rapidjson::kObjectType);
+    // cpu.AddMember("user", statsParam.cpuParams.getUser(), allocator);
+    // cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
+    // cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
+
+     Value cpu(kArrayType);
+        {      
+            cpu.PushBack(statsParam.generalParams.getcpuUsage(),allocator);            
+            cpu.PushBack(statsParam.generalParams.getcpuUsed(),allocator);                     
+        }
 
     rapidjson::Value loadAvrage(rapidjson::kObjectType);
     loadAvrage.AddMember("user", statsParam.loadAverage.getUser(), allocator);
@@ -79,12 +85,11 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
 
     rapidjson::Value system(rapidjson::kObjectType);
     Value osVersion;
-    string versionCommand = "guix --version |grep guix | cut -f 4 -d \" \"";
-    string version =UTILS::COMMAND::Execute(versionCommand.c_str());
-    version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
-    osVersion.SetString(version.c_str(),alloc);
-    Value sys;
-    
+    // string versionCommand = "guix --version |grep guix | cut -f 4 -d \" \"";
+    // string version =UTILS::COMMAND::Execute(versionCommand.c_str());
+    // version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
+    osVersion.SetString(statsParam.generalParams.getVersion().c_str(),alloc);
+    Value sys;    
     sys.SetString(StringRef(statsParam.generalParams.getSystem().c_str()));
     system.AddMember("osVersion", osVersion , allocator);
     system.AddMember("loadAverage", loadAvrage, allocator);
@@ -115,7 +120,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
         for(auto n : statsParam.networkParamList){
             Value network(kObjectType);
             Value name,type,mac;
-            version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
+           // version.erase(std::remove(version.begin(), version.end(), '\n'), version.end());
            name.SetString(n.getName().c_str(),allocator);
            type.SetString(n.getType().c_str(),allocator);
            mac.SetString(n.getMac().c_str(),allocator);
