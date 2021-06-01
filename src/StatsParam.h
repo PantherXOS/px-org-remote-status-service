@@ -13,12 +13,13 @@ using namespace std;
 #include "DiskParams.h"
 #include "GeneralParams.h"
 #include "NetworkParam.h"
+#include "LoadParams.h"
 
 
 class StatsParam {
 public:
- CpuParams cpuParams;
- CpuParams loadAverage;
+ vector<CpuParams> cpuParams;
+ LoadParams loadAverage;
  MemoryParams memoryParams,swapParams;
  vector<DiskParams> diskParams;
  GeneralParams generalParams;
@@ -28,8 +29,7 @@ public:
      for(auto net : networkParamList ){
          networkRes += net.toString() + " ";
      }
-     return cpuParams.toString()+
-            loadAverage.toString()+
+     return loadAverage.toString()+
             memoryParams.toString()+
             swapParams.toString()+
             generalParams.toString();

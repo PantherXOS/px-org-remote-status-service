@@ -16,6 +16,8 @@ public:
     void setBootTime(int bootTime);
     void setcpuUsed(float used);    
     void setcpuUsage(float usage);
+    void setHddUsed(float used);    
+    void setHddUsage(float usage);
 
 
     string getSystem();
@@ -26,6 +28,8 @@ public:
 
     float getcpuUsed();
     float getcpuUsage();
+    float getHddUsed();
+    float getHddUsage();
 
 
     string toString ();
@@ -34,6 +38,7 @@ private:
     string system,version;
     int upTime,bootTime;
     float cpuUsed,cpuUsage;
+    float hddUsed,hddUsage;
 };
 
 

@@ -56,6 +56,21 @@ float GeneralParams::getcpuUsage(){
     return this->cpuUsage;
 }
 
+void GeneralParams::setHddUsed(float used){
+    this->hddUsed = used;
+}    
+void GeneralParams::setHddUsage(float usage){
+    this->hddUsage = usage;
+}
+
+float GeneralParams::getHddUsed(){
+    return this->hddUsed;
+}
+
+float GeneralParams::getHddUsage(){
+    return this->hddUsage;
+}
+
 
 string GeneralParams::toString() {
     return  "system   : " + system + "\n" +

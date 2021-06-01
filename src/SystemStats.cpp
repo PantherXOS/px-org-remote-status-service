@@ -50,13 +50,13 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
                     amount = token;
                 else if (count == 1) {
                     if (token == "GB")
-                        statParam.memoryParams.setUsed(atof(amount.c_str()));
+                        statParam.memoryParams.setUsed(atof(amount.c_str()) * 1073741824);
                     if (token == "MB")
-                        statParam.memoryParams.setUsed((atof(amount.c_str())) / 1024);
+                        statParam.memoryParams.setUsed((atof(amount.c_str())) * 1048576);
                     if (token == "KB")
-                        statParam.memoryParams.setUsed((atof(amount.c_str())) / 1048576);
+                        statParam.memoryParams.setUsed((atof(amount.c_str())) * 1024);
                     if (token == "B")
-                        statParam.memoryParams.setUsed((atof(amount.c_str())) / 1073741824);
+                        statParam.memoryParams.setUsed((atof(amount.c_str())));
                 }
                 ++count;
                 st.erase(0, pos + delimiter.length());
@@ -64,6 +64,20 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             GLOG_INF("memory usage value: "+st);
             token = st.substr(1, st.size() - 2);
             statParam.memoryParams.setUsage(atof(token.c_str()));
+            string memCommand = "cat /proc/meminfo |grep \"^MemTotal:\" | tr -s \" \" | cut -f 2 -d \" \"";
+            string memInfo =UTILS::COMMAND::Execute(memCommand.c_str()); 
+            string unitCommand = "cat /proc/meminfo |grep \"^MemTotal:\" | tr -s \" \" | cut -f 3 -d \" \"";
+            string unit =UTILS::COMMAND::Execute(unitCommand.c_str()); 
+            unit.erase(std::remove(unit.begin(), unit.end(), '\n'), unit.end());
+            if (unit == "GB")
+                statParam.memoryParams.setTotal(stof(memInfo) * 1073741824);
+            if (unit == "MB")
+                statParam.memoryParams.setTotal(stof(memInfo)* 1048576);
+            if (unit == "kB")
+                statParam.memoryParams.setTotal(stof(memInfo) * 1024);
+            if (unit == "B")
+                statParam.memoryParams.setTotal(stof(memInfo));            
+
         } else if (key == "swap usage") {
             string delimiter = " ";
             size_t pos = 0;
@@ -76,13 +90,13 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
                     amount = token;
                 else if (count == 1) {
                     if (token == "GB")
-                        statParam.swapParams.setUsed(atof(amount.c_str()));
+                        statParam.swapParams.setUsed(atof(amount.c_str()) * 1073741824);
                     if (token == "MB")
-                        statParam.swapParams.setUsed((atof(amount.c_str())) / 1024);
+                        statParam.swapParams.setUsed((atof(amount.c_str())) * 1048576);
                     if (token == "KB")
-                        statParam.swapParams.setUsed((atof(amount.c_str())) / 1048576);
+                        statParam.swapParams.setUsed((atof(amount.c_str())) * 1024);
                     if (token == "B")
-                        statParam.swapParams.setUsed((atof(amount.c_str())) / 1073741824);
+                        statParam.swapParams.setUsed((atof(amount.c_str())));
                 }
                 ++count;
                 st.erase(0, pos + delimiter.length());
@@ -90,24 +104,29 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             token = st.substr(1, st.size() - 2);
             statParam.swapParams.setUsage(atof(token.c_str()));
         } else if (key == "cpu") {
-            // string delimiter = " ";
-            // size_t pos = 0;
-            // string token;
-            // string st = monitStatusGetValue(status, key);
-            // int count = 0;
-            // while ((pos = st.find(delimiter)) != std::string::npos) {
-            //     token = st.substr(0, pos - 3);
-            //     if (count == 0)
-            //         statParam.cpuParams.setUser(atof(token.c_str()));
-            //     else if (count == 1)
-            //         statParam.cpuParams.setSystem(atof(token.c_str()));
-            //     ++count;
-            //     st.erase(0, pos + delimiter.length());
-            // }
-            // token = st.substr(0, st.size() - 3);
-            // statParam.cpuParams.setWait(atof(token.c_str()));
             string cpuNumberCommand = "lscpu |grep \"^CPU(s):\" | tr -d \" \" | cut -f 2 -d \":\"";
             string cpuNumber =UTILS::COMMAND::Execute(cpuNumberCommand.c_str());
+            string cpumodelCommand = "cat /proc/cpuinfo |grep \"^model name\" | tr -s \" \" | cut -f 5 -d \" \"";
+            string cpumodellist =UTILS::COMMAND::Execute(cpumodelCommand.c_str());
+            string line;
+            istringstream stream{cpumodellist};
+            int num = 0;
+             while (std::getline(stream, line)) {
+                 CpuParams cpuPar;
+                 cpuPar.setNumber(num);
+                 cpuPar.setmodel(line);
+                 statParam.cpuParams.push_back(cpuPar);
+                 num++;
+             }
+            string cpuFrqCommand = "cat /proc/cpuinfo |grep \"^model name\" | tr -s \" \" | cut -f 8 -d \" \"";
+            string cpuFrqlist =UTILS::COMMAND::Execute(cpuFrqCommand.c_str());
+            string frqline;
+            istringstream str{cpuFrqlist};
+            num = 0;
+            while (std::getline(str, frqline)) {
+                statParam.cpuParams.at(num).setFrequency(frqline);
+                num++;
+            }            
             string cpuInfoCommand = "mpstat | grep -A 5 \"%idle\" | tail -n 1 | awk -F \" \" '{print 100 -  $ 12}'a";
             string cpuInfo =UTILS::COMMAND::Execute(cpuInfoCommand.c_str());                       
             auto use = 100-(stof(cpuInfo.c_str()));            
@@ -132,6 +151,14 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             }
             token = st.substr(1, st.size()-2);
             statParam.loadAverage.setWait(atof(token.c_str()));
+        } else if (key == "hdd") {
+            string hddUsageCommand = "df --total |grep \"^total\" | tr -s \" \" | cut -f 5 -d \" \" | tr -d \"%\"";
+            string _hddUsage =UTILS::COMMAND::Execute(hddUsageCommand.c_str());
+            string hddUsedCommand = "df --total |grep \"^total\" | tr -s \" \" | cut -f 2 -d \" \"";
+            string _hddUsed =UTILS::COMMAND::Execute(hddUsedCommand.c_str()); 
+            statParam.generalParams.setHddUsage(stof(_hddUsage));
+            statParam.generalParams.setHddUsed(stof(_hddUsed)*1024);
+            
         }
     }
 }

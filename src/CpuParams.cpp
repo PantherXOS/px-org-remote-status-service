@@ -4,32 +4,32 @@
 
 #include "CpuParams.h"
 
-void CpuParams::setUser(float user) {
-    this->user = user;
+void CpuParams::setNumber(int  number){
+    this->number = number;
 }
 
-void CpuParams::setSystem(float system) {
-    this->system = system;
+void CpuParams::setFrequency(string frequency) {
+    this->frequency = frequency;
 }
 
-void CpuParams::setWait(float wait) {
-    this->wait = wait;
+void CpuParams::setmodel(string model) {
+    this->model = model;
 }
 
-float CpuParams::getUser() {
-    return this->user;
+int CpuParams::getNumber() {
+    return this->number;
 }
 
-float CpuParams::getSystem() {
-    return this->system;
+string CpuParams::getFrequency() {
+    return this->frequency;
 }
 
-float CpuParams::getWait() {
-    return this->wait;
+string CpuParams::getmodel() {
+    return this->model;
 }
 
 string CpuParams::toString() {
-    return "cpu User    : "+ to_string(user) +"\n" +
-            "cpu System : "+ to_string(system) + "\n" +
-            "cpu Wait   : "+ to_string(wait)+ "\n";
+    return "cpu number    : "+ to_string(number) +"\n" +
+            "cpu frequency : "+ frequency + "\n" +
+            "cpu model   : "+ model + "\n";
 }

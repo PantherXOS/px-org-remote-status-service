@@ -10,18 +10,19 @@ using namespace std;
 
 class CpuParams {
 public:
-    void setUser(float user);
-    void setSystem(float system);
-    void setWait(float wait);
+    void setNumber(int  number);
+    void setFrequency(string frequency);
+    void setmodel(string model);
 
-    float getUser();
-    float getSystem();
-    float getWait();
+    int getNumber();
+    string getFrequency();
+    string getmodel();
 
     string toString();
 
 private:
-    float user,system,wait;
+    int number;
+    string frequency,model;
 
 };
 

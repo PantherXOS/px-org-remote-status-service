@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding load Avereage params
 - Adding cpu informatio
 - Adding version
+- Adding total memory
+- Adding cpus information
 
 ## [0.1.9] - 2021-05-
 ### Changes

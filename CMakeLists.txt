@@ -37,6 +37,7 @@ FILE(GLOB StatsSources
         src/Stats.h
         src/SystemStats.h       src/SystemStats.cpp
 	src/CpuParams.cpp       src/CpuParams.h
+        src/LoadParams.cpp      src/LoadParams.h
         src/MemoryParams.cpp    src/MemoryParams.h
         src/DiskParams.cpp      src/DiskParams.h
         src/GeneralParams.cpp   src/GeneralParams.h

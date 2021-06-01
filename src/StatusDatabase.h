@@ -43,8 +43,8 @@ public:
     bool readGeneralStats(GeneralParams &resultGeneralStats);
     int insertGeneralStats(GeneralParams generalStats);
 
-    bool readCpuStats(CpuParams &resultCpuStats, int gid);
-    int insertCpuStats(CpuParams cpuStats, int gid);
+    bool readCpuStats(vector<CpuParams> &resultCpuList, int gid);
+    int insertCpuStats(vector<CpuParams> cpuList, int gid);
 
     bool readMemoryStats(MemoryParams &resultMemoryStats, int gid);
     int inserMemorytStats(MemoryParams memoryStats, int gid);
@@ -62,8 +62,8 @@ public:
     void insertAllStats(StatsParam statParams);
     void readAllStats(StatsParam &statsParam);
 
-    bool readLoadAverageStats(CpuParams &resultLoadAveargeStats, int gid);
-    int insertLoadAverageStats(CpuParams loadAveargeStats, int gid);
+    bool readLoadAverageStats(LoadParams &resultLoadAveargeStats, int gid);
+    int insertLoadAverageStats(LoadParams loadAveargeStats, int gid);
 
     void deletLastStat();
 
@@ -75,11 +75,11 @@ private:
     {
         try {
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER, cpuUsage REAL, cpuUsed REAL)");
+                    "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY,system TEXT,version TEXT,upTime INTEGER,bootTime INTEGER, cpuUsage REAL, cpuUsed REAL, hddUsage REAL, hddUsed REAL)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,user REAL,system REAL,wait REAL,gid INTEGER)");
+                    "CREATE TABLE IF NOT EXISTS cpu (id INTEGER PRIMARY KEY,number INTEGER,frequency TEXT,model TEXT,gid INTEGER)");
             mDb.exec(
-                    "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL,gid INTEGER)");
+                    "CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, memoryUsed REAL,memoryUsage REAL,memorTotal REAL,gid INTEGER)");
             mDb.exec(
                     "CREATE TABLE IF NOT EXISTS swap (id INTEGER PRIMARY KEY, swapUsed REAL,swapUsage REAL,gid INTEGER)");
             mDb.exec(

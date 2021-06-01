@@ -12,12 +12,20 @@ void MemoryParams::setUsage(float usage) {
     this->usage = usage;
 }
 
+void MemoryParams::setTotal(float total) {
+    this->total = total;
+}
+
 float MemoryParams::getUsed() {
     return this->used;
 }
 
 float MemoryParams::getUsage() {
     return this->usage;
+}
+
+float MemoryParams::getTotal() {
+    return this->total;
 }
 
 string MemoryParams::toString() {

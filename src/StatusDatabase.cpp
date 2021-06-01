@@ -28,6 +28,8 @@ bool StatusDatabase::readGeneralStats(GeneralParams &resultGeneralStats) {
             resultGeneralStats.setVersion(query.getColumn("version"));
             resultGeneralStats.setcpuUsage(query.getColumn("cpuUsage").getDouble());
             resultGeneralStats.setcpuUsed(query.getColumn("cpuUsed").getDouble());
+            resultGeneralStats.setHddUsage(query.getColumn("hddUsage").getDouble());
+            resultGeneralStats.setHddUsed(query.getColumn("hddUsed").getDouble());
         }
         // Reset the query to use it again
         query.reset();
@@ -47,7 +49,9 @@ int StatusDatabase::insertGeneralStats(GeneralParams generalStats) {
                                  to_string(generalStats.getUpTime())+ "\",\""+
                                  to_string(generalStats.getBootTime())+ "\",\""+
                                  to_string(generalStats.getcpuUsage())+ "\",\""+
-                                 to_string(generalStats.getcpuUsed()) + "\")");
+                                 to_string(generalStats.getcpuUsed()) + "\",\""+
+                                 to_string(generalStats.getHddUsage())+ "\",\""+
+                                 to_string(generalStats.getHddUsed()) + "\")");
         if(res == 0)
             return -2;
         SQLite::Statement query(mDb, "SELECT id FROM general ORDER BY id DESC  LIMIT 1");
@@ -66,19 +70,22 @@ int StatusDatabase::insertGeneralStats(GeneralParams generalStats) {
     return 0;
 }
 
-bool StatusDatabase::readCpuStats(CpuParams &resultCpuStats, int gid) {
+bool StatusDatabase::readCpuStats(vector<CpuParams> &resultCpuList, int gid) {
+    resultCpuList.clear();
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement query(mDb, " SELECT * FROM cpu WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC  LIMIT 1");
+        SQLite::Statement query(mDb, " SELECT * FROM cpu WHERE  gid = \"" + to_string(gid) + "\" ORDER BY id DESC ");        
         while (query.executeStep()) {
+            CpuParams cpuParams;
             hasResult = true;
-            resultCpuStats.setSystem(query.getColumn("system").getDouble());
-            resultCpuStats.setUser(query.getColumn("user").getDouble());
-            resultCpuStats.setWait(query.getColumn("wait").getDouble());
+            cpuParams.setNumber(query.getColumn("number").getInt());
+            cpuParams.setFrequency(query.getColumn("frequency"));
+            cpuParams.setmodel(query.getColumn("model"));
+            resultCpuList.push_back(cpuParams);
         }
         // Reset the query to use it again
-        query.reset();
+        query.reset();        
     }
     catch(std::exception& e)
     {
@@ -87,27 +94,28 @@ bool StatusDatabase::readCpuStats(CpuParams &resultCpuStats, int gid) {
     return hasResult;
 }
 
-int StatusDatabase::insertCpuStats(CpuParams cpuStats, int gid) {
-    try {
-        int res = this->mDb.exec("INSERT INTO cpu VALUES (NULL,"+
-                                 to_string(cpuStats.getUser())+ ","+
-                                 to_string(cpuStats.getSystem())+ ","+
-                                 to_string(cpuStats.getWait()) + ","+
-                                 to_string(gid) + ")");
-        if(res == 0)
-            return -2;
-        SQLite::Statement query(mDb, "SELECT id FROM cpu ORDER BY id DESC  LIMIT 1");
-        while (query.executeStep()) {
-            int id = query.getColumn(0).getInt()- MAX_TABLE_RECORD;
-            if(id>0)
-                this->mDb.exec("DELETE FROM cpu WHERE id="+to_string(id));
+int StatusDatabase::insertCpuStats(vector<CpuParams> cpuList, int gid) {
+    for(auto cpu : cpuList) {
+        try {
+            int res = this->mDb.exec("INSERT INTO cpu VALUES (NULL,\"" +
+                                                to_string(cpu.getNumber()) + "\",\"" +
+                                                cpu.getFrequency() + "\",\"" +                                                                               
+                                                cpu.getmodel() + "\",\"" + 
+                                                to_string(gid) + "\")");
+            if (res == 0)
+                return -2;
+            SQLite::Statement query(mDb, "SELECT id FROM cpu ORDER BY id DESC  LIMIT 1");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt() - MAX_TABLE_RECORD;
+                if (id > 0)
+                    this->mDb.exec("DELETE FROM cpu WHERE id=" + to_string(id));
+            }
+            query.reset();
         }
-        query.reset();
-    }
-    catch(std::exception& e)
-    {
-        std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
-        return -1;
+        catch (std::exception &e) {
+            std::cout << "Err:   SQLite exception: " << e.what() << std::endl;
+            return -1;
+        }
     }
     return 0;
 }
@@ -121,6 +129,7 @@ bool StatusDatabase::readMemoryStats(MemoryParams &resultMemoryStats, int gid) {
             hasResult = true;
             resultMemoryStats.setUsed(query.getColumn("memoryUsed").getDouble());
             resultMemoryStats.setUsage(query.getColumn("memoryUsage").getDouble());
+            resultMemoryStats.setTotal(query.getColumn("memorTotal").getDouble());
         }
         // Reset the query to use it again
         query.reset();
@@ -137,6 +146,7 @@ int StatusDatabase::inserMemorytStats(MemoryParams memoryStats, int gid) {
         int res = this->mDb.exec("INSERT INTO memory VALUES (NULL,"+
                                  to_string(memoryStats.getUsed())+","+
                                  to_string(memoryStats.getUsage()) + ","+
+                                 to_string(memoryStats.getTotal()) + ","+
                                  to_string(gid) + ")");
         if(res == 0)
             return -2;
@@ -412,7 +422,7 @@ void StatusDatabase::stringSeprator(std::string source,std::string seprator,vect
 }
 
 
-bool StatusDatabase::readLoadAverageStats(CpuParams &resultLoadAveargeStats, int gid) {
+bool StatusDatabase::readLoadAverageStats(LoadParams &resultLoadAveargeStats, int gid) {
     bool hasResult = false;
     try {
         // Compile a SQL query, containing one parameter (index 1)
@@ -433,7 +443,7 @@ bool StatusDatabase::readLoadAverageStats(CpuParams &resultLoadAveargeStats, int
     return hasResult;
 }
 
-int StatusDatabase::insertLoadAverageStats(CpuParams loadAveargeStats, int gid) {
+int StatusDatabase::insertLoadAverageStats(LoadParams loadAveargeStats, int gid) {
     try {
         int res = this->mDb.exec("INSERT INTO loadAverage VALUES (NULL,"+
                                  to_string(loadAveargeStats.getUser())+ ","+

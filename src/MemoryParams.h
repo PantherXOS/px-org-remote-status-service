@@ -12,14 +12,17 @@ class MemoryParams {
 public:
     void setUsed(float used);
     void setUsage(float usage);
+    void setTotal(float total);
 
     float getUsed();
     float getUsage();
+    float getTotal();
 
     string toString();
 
 private:
     float used,usage;
+    float total;
 };
 
 
