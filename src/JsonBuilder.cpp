@@ -66,12 +66,12 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
             Value cpus(kObjectType);
             std::string s1(d.getFrequency());
             rapidjson::Value frq;
-            char buffer[10];
+            char buffer[s1.length()];
             int len = sprintf(buffer, s1.c_str());
             frq.SetString(buffer, len, allocator);
 
             std::string s2(d.getmodel());
-            char buffer2[30];
+            char buffer2[s2.length()];
             Value cpModel;
             int len2 = sprintf(buffer2, s2.c_str());
             cpModel.SetString(buffer2, len2, allocator);
@@ -135,13 +135,13 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
             Value disk(kObjectType);            
             
             std::string s(d.getType());
-            char buffer[10];
+            char buffer[s.length()];
             Value ty;
             int len = sprintf(buffer, s.c_str());
             ty.SetString(buffer, len, allocator);
 
             std::string s2(d.getModel());
-            char buffer2[30];
+            char buffer2[s2.length()];
             Value diskModel;
             int len2 = sprintf(buffer2, s2.c_str());
             diskModel.SetString(buffer2, len2, allocator);
