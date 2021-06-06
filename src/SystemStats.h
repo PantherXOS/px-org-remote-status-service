@@ -31,7 +31,7 @@ private:
     vector<string> systemStatsKeys = {"System", "version","cpu", "uptime " ,"memory usage", "swap usage", "boot time","load average", "hdd"};
     void monitStatusParser(string status,StatsParam&  statParam);
     string monitStatusGetValue (string status,string key);
-    void diskStatusParser(string status, vector<DiskParams> &diskStatus);
+    void diskStatusParser(vector<DiskParams> &diskStatus);
     vector<NetworkParam> networkParamsParser();
     string exec(const char* cmd);
 

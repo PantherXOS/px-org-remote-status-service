@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.10] - 2021-05-
+## [0.2.0] - 2021-05-
 ### Changes
 - Adding Network information data
 - Put network data in DB
@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding version
 - Adding total memory
 - Adding cpus information
+- Adding hdd data
+- Adding protection
 
 ## [0.1.9] - 2021-05-
 ### Changes

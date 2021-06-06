@@ -9,23 +9,19 @@ using namespace std;
 
 class DiskParams {
 public:
-    void setName(string name);
-    void setFree(float free);
-    void setTotal(float total);
-    void setUsed(float used);
-    void setUsage(float usage);
+    void setType(string type);
+    void setModel(string model);
+    void setCapacity(float capacity);
 
-    string getName();
-    float getFree();
-    float getTotal();
-    float getUsed();
-    float getUsage();
+    string getType();
+    string getModel();
+    float getCapacity();
 
     string toString();
 
 private:
-    string name;
-   float free,total,used,usage;
+    string type,model;
+    float capacity;
 
 };
 

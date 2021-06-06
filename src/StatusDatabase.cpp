@@ -176,11 +176,9 @@ bool StatusDatabase::readDiskStats(vector<DiskParams> &resultDiskStats, int gid)
 
         while (query.executeStep()) {
             hasResult = true;
-            diskParams.setName(query.getColumn("name"));
-            diskParams.setFree(query.getColumn("free").getDouble());
-            diskParams.setTotal(query.getColumn("total").getDouble());
-            diskParams.setUsage(query.getColumn("usage").getDouble());
-            diskParams.setUsed(query.getColumn("used").getDouble());
+            diskParams.setCapacity(query.getColumn("capacity").getDouble());
+            diskParams.setType(query.getColumn("type"));
+            diskParams.setModel(query.getColumn("model"));
             resultDiskStats.push_back(diskParams);
         }
         // Reset the query to use it again
@@ -197,11 +195,9 @@ int StatusDatabase::insertDiskStats(vector<DiskParams> diskStats, int gid) {
     for(DiskParams disk : diskStats) {
         try {
             int res = this->mDb.exec("INSERT INTO disk VALUES (NULL,\"" +
-                                             disk.getName() + "\",\"" +
-                                     to_string(disk.getFree()) + "\",\"" +
-                                     to_string(disk.getTotal()) + "\",\"" +
-                                     to_string(disk.getUsed()) + "\",\"" +
-                                     to_string(disk.getUsage()) + "\",\"" +
+                                     to_string(disk.getCapacity()) + "\",\"" +
+                                     disk.getType() + "\",\"" +
+                                     disk.getModel() + "\",\"" +
                                      to_string(gid) + "\")");
             if (res == 0)
                 return -2;

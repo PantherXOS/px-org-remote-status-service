@@ -29,7 +29,7 @@ void StatChecker::run() {
             auto nowTime = chrono::system_clock::to_time_t(now);
             GLOG_INF("check stat on " + string(std::ctime(&nowTime)));
             statsParam = sysStat.get(m_appConfig);
-            GLOG_INF(" ****************** NetworkPARAM: ");
+            GLOG_INF(" NetworkPARAM: ");
             for(auto par : statsParam.networkParamList)
                 GLOG_INF(par.toString());
             StatusDatabase::instance().insertAllStats(statsParam);

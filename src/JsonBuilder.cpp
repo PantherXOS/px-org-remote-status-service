@@ -62,16 +62,25 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     
     Value cpuNum(kArrayType);
     {
-            for(auto d : statsParam.cpuParams){
+        for(auto d : statsParam.cpuParams){
             Value cpus(kObjectType);
-            Value frq,model;
-            frq.SetString(StringRef(d.getFrequency().c_str()));
-            model.SetString(StringRef(d.getmodel().c_str()));
+            std::string s1(d.getFrequency());
+            rapidjson::Value frq;
+            char buffer[10];
+            int len = sprintf(buffer, s1.c_str());
+            frq.SetString(buffer, len, allocator);
+
+            std::string s2(d.getmodel());
+            char buffer2[30];
+            Value cpModel;
+            int len2 = sprintf(buffer2, s2.c_str());
+            cpModel.SetString(buffer2, len2, allocator);
+
             cpus.AddMember("cores", d.getNumber(), alloc);
             cpus.AddMember("frequency", frq, alloc);
-            cpus.AddMember("model", model, alloc);
+            cpus.AddMember("model", cpModel, allocator);
             cpuNum.PushBack(cpus,alloc);
-            }  
+        }  
     }
     // cpu.AddMember("user", statsParam.cpuParams.getUser(), allocator);
     // cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
@@ -123,14 +132,23 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
         {
         Value disks(kArrayType);
         for(DiskParams d : statsParam.diskParams){
-            Value disk(kObjectType);
-            Value name;
-            name.SetString(StringRef(d.getName().c_str()));
-            disk.AddMember("name", name, alloc);
-            disk.AddMember("total", d.getTotal(), alloc);
-            disk.AddMember("free", d.getFree(), alloc);
-            disk.AddMember("used", d.getUsed(), alloc);
-            disk.AddMember("usage", d.getUsage(), alloc);
+            Value disk(kObjectType);            
+            
+            std::string s(d.getType());
+            char buffer[10];
+            Value ty;
+            int len = sprintf(buffer, s.c_str());
+            ty.SetString(buffer, len, allocator);
+
+            std::string s2(d.getModel());
+            char buffer2[30];
+            Value diskModel;
+            int len2 = sprintf(buffer2, s2.c_str());
+            diskModel.SetString(buffer2, len2, allocator);
+
+            disk.AddMember("capacity", d.getCapacity(), alloc);
+            disk.AddMember("type", ty, alloc);
+            disk.AddMember("model", diskModel, alloc);            
             disks.PushBack(disk, alloc);
             }
         Hardware.AddMember("memory", statsParam.memoryParams.getTotal(), alloc);
