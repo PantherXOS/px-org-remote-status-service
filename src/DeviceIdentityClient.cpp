@@ -55,7 +55,7 @@ AccessToken DeviceIdentityClient::getAccessToken() {
     if (lines.size() == 0 
         || doc.Parse(lines[lines.size() - 1].c_str()).HasParseError()
         || !doc.HasMember(ACCESS_TOKEN_KEY)) {
-        throw new std::runtime_error("invalid response");
+        throw new std::runtime_error("Invalid response");
     }
     return AccessToken(
         doc[ACCESS_TOKEN_KEY].GetString(),

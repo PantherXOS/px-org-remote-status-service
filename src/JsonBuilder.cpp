@@ -176,7 +176,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
                 _ipv4_extip.SetString(n.getIP4().extIp.c_str(),allocator);
                 _ipv4_gatevay.SetString(n.getIP4().gateway.c_str(),allocator);
                 ipv4.AddMember("ip", _ipv4_ip, allocator);
-                ipv4.AddMember("extip",_ipv4_extip , allocator);
+                ipv4.AddMember("extIp",_ipv4_extip , allocator);
                 ipv4.AddMember("gateway", _ipv4_gatevay, allocator);
                 Value dns4List(kArrayType);
                 {
@@ -196,7 +196,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
                 _ipv6_extip.SetString(n.getIP6().extIp.c_str(),allocator);
                 _ipv6_gatevay.SetString(n.getIP6().gateway.c_str(),allocator);
                 ipv6.AddMember("ip", _ipv6_ip, allocator);
-                ipv6.AddMember("extip", _ipv6_extip, allocator);
+                ipv6.AddMember("extIp", _ipv6_extip, allocator);
                 ipv6.AddMember("gateway", _ipv6_gatevay, allocator);
                 Value dns6(kArrayType);
                 {

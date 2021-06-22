@@ -40,7 +40,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {      
                 std::cerr << e.what() << '\n';         
-                GLOG_ERR("Error In retrive version ");
+                GLOG_ERR("Could not retrieve system version.");
             }            
         }
         else if (key == "uptime")
@@ -95,7 +95,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
-                GLOG_ERR("Error in retrive memory params ");
+                GLOG_ERR("Could not retrieve information about memory.");
             }   
         } else if (key == "swap usage") {
             try
@@ -128,7 +128,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
-                GLOG_ERR("Error in retriving swap params");
+                GLOG_ERR("Could not get information about swap space.");
             }
          
         } else if (key == "cpu") {
@@ -176,7 +176,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
-                GLOG_ERR("Error in retriving CPU params");
+                GLOG_ERR("Could not get information about CPU.");
             }            
             
         } else if (key == "load average") {
@@ -202,7 +202,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
-                GLOG_ERR("Error in retriving load average data");
+                GLOG_ERR("Could not get information about average load.");
             }            
             
         } else if (key == "hdd") {
@@ -220,7 +220,7 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
-                GLOG_ERR("Erro in retriving hdd data");
+                GLOG_ERR("Could not get information about HDD.");
             }
         }
     }
@@ -296,7 +296,7 @@ void SystemStats::diskStatusParser( vector<DiskParams> &diskStatus) {
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
-        GLOG_ERR("Error in parsing disk params");
+        GLOG_ERR("Could not get information about disks.");
     }  
 }
 
@@ -338,7 +338,7 @@ bool SystemStats::runMonitProcess() {
     string command = "monit -c /tmp/monitrc";
     
     string result = UTILS::COMMAND::Execute(command.c_str());
-    GLOG_INF("monit run successfully " + result );
+    GLOG_INF("Monit started successfully: " + result );
     return true;
 }
 
@@ -359,7 +359,7 @@ vector<NetworkParam> SystemStats::networkParamsParser( ){
                 NetworkParam netParam;
                 if(!res.empty()){
                     netParam = deviceParamsParser(res, devices.at(0));
-                    GLOG_INF("Device information parsed succsessfully");
+                    GLOG_INF("Device information parsed succsessfully.");
                 }else{
                     GLOG_ERR("nmcli command has no value");
                 } 
@@ -474,7 +474,7 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
-        GLOG_ERR("Error in retriving network data");
+        GLOG_ERR("Could not retrieve information about network.");
     }   
 
     return networkParam;

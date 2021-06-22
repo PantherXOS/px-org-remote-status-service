@@ -40,7 +40,7 @@ void logInit(bool debugMode)
         logTarget = LogTarget::CONSOLE;
 
     GLOG_INIT(logTarget, logLevel);
-    GLOG_INF("Starting Remote status Service");
+    GLOG_INF("Starting PantherX Organization Remote Status Service ...");
 }
 
 int main(int argc, char *argv[]) {
