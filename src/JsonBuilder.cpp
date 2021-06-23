@@ -86,35 +86,33 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     // cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
     // cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
 
-     Value cpu(kArrayType);
-        {      
-            cpu.PushBack(statsParam.generalParams.getcpuUsage(),allocator);            
-            cpu.PushBack(statsParam.generalParams.getcpuUsed(),allocator);                     
-        }
 
-    Value hdd(kArrayType);
-        {      
-            hdd.PushBack(statsParam.generalParams.getHddUsage(),allocator);            
-            hdd.PushBack(statsParam.generalParams.getHddUsed(),allocator);                     
-        }
+    rapidjson::Value cpu(rapidjson::kObjectType);    
+    cpu.AddMember("usage",statsParam.generalParams.getcpuUsage() , allocator);
+    cpu.AddMember("used", statsParam.generalParams.getcpuUsed(), allocator);
+
+   
+
+    rapidjson::Value hdd(rapidjson::kObjectType);    
+    hdd.AddMember("usage",statsParam.generalParams.getHddUsage() , allocator);
+    hdd.AddMember("used", statsParam.generalParams.getHddUsed(), allocator);
 
     rapidjson::Value loadAvrage(rapidjson::kObjectType);
     loadAvrage.AddMember("user", statsParam.loadAverage.getUser(), allocator);
     loadAvrage.AddMember("system",statsParam.loadAverage.getSystem() , allocator);
     loadAvrage.AddMember("wait", statsParam.loadAverage.getWait(), allocator);
 
-    //apidjson::Value memory(rapidjson::kObjectType);
-    Value memory(kArrayType);
-    {
-        memory.PushBack(statsParam.memoryParams.getUsage(), allocator);
-        memory.PushBack(statsParam.memoryParams.getUsed() , allocator);
+    
+    rapidjson::Value memory(rapidjson::kObjectType);    
+    memory.AddMember("usage",statsParam.memoryParams.getUsage() , allocator);
+    memory.AddMember("used", statsParam.memoryParams.getUsed(), allocator);
 
-    }    
 
-    //rapidjson::Value swap(rapidjson::kObjectType);
-    Value swap(kArrayType);
-    swap.PushBack(statsParam.swapParams.getUsage(), allocator);
-    swap.PushBack(statsParam.swapParams.getUsed() , allocator);
+    rapidjson::Value swap(rapidjson::kObjectType);
+    swap.AddMember("usage",statsParam.swapParams.getUsage() , allocator);
+    swap.AddMember("used", statsParam.swapParams.getUsed(), allocator);
+    
+
 
     rapidjson::Value system(rapidjson::kObjectType);
     Value osVersion;
