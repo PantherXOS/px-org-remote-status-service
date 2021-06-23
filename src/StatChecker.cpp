@@ -34,7 +34,7 @@ void StatChecker::run() {
                 GLOG_INF(par.toString());
             StatusDatabase::instance().insertAllStats(statsParam);
             StatusDatabase::instance().readAllStats(result);
-            string js = jsonBuilder.allStatus(result).GetString();
+            string js = jsonBuilder.allStatus(result,sysStat.getApplications()).GetString();
             GLOG_INF( "JSON RESULT: "+ js);
             if (IdPClient::Instance().submitStatus(js)) {
                 GLOG_INF( "Stat Data sent successfully");

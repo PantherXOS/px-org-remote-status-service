@@ -47,7 +47,7 @@ StringBuffer JsonBuilder::swapPart(MemoryParams swapParams) {
     return swap;
 }
 
-StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
+StringBuffer JsonBuilder::allStatus(StatsParam statsParam,vector<InstalledApplication> applicationList) {
 // document is the root of a json message
     rapidjson::Document document;
     Document::AllocatorType& alloc = document.GetAllocator();
@@ -85,7 +85,20 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     // cpu.AddMember("user", statsParam.cpuParams.getUser(), allocator);
     // cpu.AddMember("system",statsParam.cpuParams.getSystem() , allocator);
     // cpu.AddMember("wait", statsParam.cpuParams.getWait(), allocator);
-
+    Value applications(kArrayType);
+    for(auto app : applicationList){
+        Value application(kObjectType);
+        Value name,version,loc;
+        name.SetString(app.getName().c_str(),allocator);
+        version.SetString(app.getVersion().c_str(),allocator);
+        loc.SetString(app.getStoreLocation().c_str(),allocator);
+        application.AddMember("name",name,alloc);
+        application.AddMember("version",version,alloc);
+        application.AddMember("storeLocation",loc,alloc);
+        applications.PushBack(application,alloc);
+    }
+    rapidjson::Value softwareSystem(rapidjson::kObjectType); 
+    softwareSystem.AddMember("system",applications, allocator);
 
     rapidjson::Value cpu(rapidjson::kObjectType);    
     cpu.AddMember("usage",statsParam.generalParams.getcpuUsage() , allocator);
@@ -217,6 +230,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam) {
     document.AddMember("firmware", "TODO", allocator);
     document.AddMember("network", networks, allocator);
     document.AddMember("hardware", Hardware, allocator);
+    document.AddMember("software", softwareSystem, allocator);
     document.AddMember("system", system, allocator);
 
 

@@ -15,6 +15,7 @@
 #include "rapidjson/stringbuffer.h"
 #include "EventObject.h"
 #include "Utils.h"
+#include "InstalledApplication.h"
 
 
 using namespace rapidjson;
@@ -23,7 +24,7 @@ using namespace std;
 class JsonBuilder {
 public:
 
-    StringBuffer allStatus(StatsParam statsParam);
+    StringBuffer allStatus(StatsParam statsParam,vector<InstalledApplication> applicationList);
     StringBuffer event(vector<EventObject> eventObject);
 private:
     StringBuffer cpuPart(CpuParams cpuParams);

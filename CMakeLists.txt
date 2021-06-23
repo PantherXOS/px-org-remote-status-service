@@ -46,6 +46,7 @@ FILE(GLOB StatsSources
         src/DiskStats.cpp       src/DiskStats.h        
         src/StatChecker.cpp     src/StatChecker.h
         src/NetworkParam.cpp    src/NetworkParam.h
+        src/InstalledApplication.cpp src/InstalledApplication.h
         src/NetworkAddress.h)
 
 FILE(GLOB ApiSources

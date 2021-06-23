@@ -16,12 +16,14 @@
 #include "Utils.h"
 #include "StatsParam.h"
 #include "Logger.h"
+#include "InstalledApplication.h"
 
 
 class SystemStats {
 public:
     SystemStats(const AppConfig &cfg);
     StatsParam get(const AppConfig &cfg);
+    vector<InstalledApplication> getApplications();
 
 protected:
     string initMonitRCFile(const string &monitrcPath);
@@ -39,6 +41,8 @@ private:
     std::string m_monitRCPath;
     void stringSeprator(std::string source,std::string seprator,vector<string> &resultList);
     NetworkParam deviceParamsParser(std::string data, std::string device);
+    
+
 };
 
 

@@ -335,8 +335,7 @@ bool SystemStats::runMonitProcess() {
     string res = UTILS::COMMAND::Execute(command2.c_str()); 
     string res2 = "chmod 700 /tmp/monitrc";  
     UTILS::COMMAND::Execute(res2.c_str());
-    string command = "monit -c /tmp/monitrc";
-    
+    string command = "monit -c /tmp/monitrc";    
     string result = UTILS::COMMAND::Execute(command.c_str());
     GLOG_INF("Monit started successfully: " + result );
     return true;
@@ -478,4 +477,28 @@ NetworkParam SystemStats::deviceParamsParser(std::string data, std::string devic
     }   
 
     return networkParam;
+}
+
+vector<InstalledApplication> SystemStats::getApplications(){
+   vector<InstalledApplication> applicationList;
+
+    string appCommand = "guix package --list-installed --profile=/run/current-system/profile | tr -s '\t' ','";  
+    string line, found;
+    found = UTILS::COMMAND::Execute(appCommand.c_str());
+    if(!found.empty())
+    {
+          istringstream stream{found};
+        while (std::getline(stream, line)) {            
+            vector<string> appInfo;
+            InstalledApplication apps;
+            stringSeprator(line, ",", appInfo);
+            if(!appInfo.empty()){
+                apps.setName(appInfo.at(0));
+                apps.setVersion(appInfo.at(1));
+                apps.setStoreLocation(appInfo.at(3));
+                applicationList.push_back(apps);
+            }        
+        }
+    } 
+    return applicationList;
 }
