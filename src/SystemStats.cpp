@@ -23,7 +23,6 @@ string SystemStats::monitStatusGetValue(string status, string key) {
 
 void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
     for (string key : systemStatsKeys) {
-        GLOG_INF("systemStatsKeys parser, key = "+key);
         if (key == "System")
             statParam.generalParams.setSystem(monitStatusGetValue(status, key));
         else if (key == "version"){
@@ -53,7 +52,6 @@ void SystemStats::monitStatusParser(string status, StatsParam &statParam) {
                 string delimiter = " ";
                 size_t pos = 0;
                 string token, amount;
-                GLOG_INF("status: "+status);
                 string st = monitStatusGetValue(status, key);
                 int count = 0;
                 while ((pos = st.find(delimiter)) != std::string::npos) {
