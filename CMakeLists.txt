@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS -pthread)
 
 find_package(yaml-cpp REQUIRED)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
+set(QT5_LIBRARIES Qt5::Widgets Qt5::Network)
 
 # Generate CapnProto source and header files ==================================
 find_package(CapnProto CONFIG REQUIRED)
@@ -71,7 +76,7 @@ set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
 set(RESTCLIENT_LIBRARY "librestclient-cpp.a")
 set(LIBRARIES_SEARCH_PATHS ${RESTCLIENT_LIBRARY} )
 include_directories(${HEADER_SEARCH_PATHS})
-target_link_libraries(px-org-remote-status-service CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
+target_link_libraries(px-org-remote-status-service  ${QT5_LIBRARIES}  CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATION bin)
 

@@ -32,7 +32,8 @@ public:
      return loadAverage.toString()+
             memoryParams.toString()+
             swapParams.toString()+
-            generalParams.toString();
+            generalParams.toString()+
+            networkRes;
  };
 };
 

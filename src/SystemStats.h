@@ -12,6 +12,14 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <AppConfig.h>
+#include <resolv.h>
+#include <arpa/inet.h>
+#include <QNetworkInterface>
+#include <qdebug.h>
+#include "resolv.h"
+#include <arpa/inet.h>
+#include "QDnsLookup"
+#include "QHostInfo"
 #include "Stats.h"
 #include "Utils.h"
 #include "StatsParam.h"
@@ -36,11 +44,12 @@ private:
     void diskStatusParser(vector<DiskParams> &diskStatus);
     vector<NetworkParam> networkParamsParser();
     string exec(const char* cmd);
-
-private:
+    //void networkParamsNmcliParser(vector<NetworkParam> &result);
+    void networkParamsFalbackParser(vector<NetworkParam> &result);
     std::string m_monitRCPath;
     void stringSeprator(std::string source,std::string seprator,vector<string> &resultList);
     NetworkParam deviceParamsParser(std::string data, std::string device);
+    void readDns(vector<std::string> & allDns);
     
 
 };

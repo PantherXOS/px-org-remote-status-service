@@ -341,31 +341,140 @@ bool SystemStats::runMonitProcess() {
 
 vector<NetworkParam> SystemStats::networkParamsParser( ){
     vector<NetworkParam> netParList;
-    string devCommand = "nmcli -m tabular --terse device";  
-    string line, found;
-    found = UTILS::COMMAND::Execute(devCommand.c_str());
-    if(!found.empty())
-    {
-          istringstream stream{found};
-        while (std::getline(stream, line)) {            
-            vector<string> devices;
-            stringSeprator(line, ":", devices);
-            if(devices.at(0) != "lo"){
-                string netParamCommand ="nmcli --terse device show "+devices.at(0);
-                string res = UTILS::COMMAND::Execute(netParamCommand.c_str());
-                NetworkParam netParam;
-                if(!res.empty()){
-                    netParam = deviceParamsParser(res, devices.at(0));
-                    GLOG_INF("Device information parsed succsessfully.");
-                }else{
-                    GLOG_ERR("nmcli command has no value");
-                } 
-                netParList.push_back(netParam);
-            }
-        }
-    } 
+    // if(!system("nmcli")){
+    //     GLOG_INF("Network Manager Found");
+    //     networkParamsNmcliParser(netParList);
+    // }else{
+     //   GLOG_INF("Network Manager Not Found");
+        networkParamsFalbackParser(netParList);
+    //}   
+    
     return netParList;
 }
+
+void SystemStats::networkParamsFalbackParser(vector<NetworkParam> &result){
+    QNetworkInterface qn;
+    string IP4Gateway,IP6Gateway;
+    auto interface_list = qn.allInterfaces();
+    string devCommand = "ip -4 route show | cut -f 3 -d \" \"";  
+    string line, found;
+    found = UTILS::COMMAND::Execute(devCommand.c_str());
+            if(!found.empty())
+            {
+                istringstream stream{found};
+                bool find;
+                while (std::getline(stream, line)) { 
+                    for(auto l :interface_list) {
+                        if(l.name().toStdString().find(line) != std::string::npos)
+                            find = true;
+                    } 
+                     if(!find)
+                        IP4Gateway = line;
+                }               
+            }
+    string gCommand = "ip -6 route show | cut -f 3 -d \" \"";  
+    string line6, found6;
+    found6 = UTILS::COMMAND::Execute(gCommand.c_str());
+            if(!found6.empty())
+            {
+                istringstream stream{found6};
+                bool find;
+                while (std::getline(stream, line6)) { 
+                    for(auto l :interface_list) {
+                        if(l.name().toStdString().find(line6) != std::string::npos)
+                            find = true;
+                    } 
+                     if(!find)
+                        IP6Gateway = line6;
+                    find =false;
+                }               
+            }
+    for(auto interface : interface_list){        
+        NetworkParam netParam;
+        if(interface.humanReadableName().toStdString()!= "lo"){
+            netParam.setName(interface.humanReadableName().toStdString());
+        //netParam.setType(interface.type().toStdString());
+        netParam.setMac(interface.hardwareAddress().toStdString());
+        if(interface.flags() & 0x1){
+
+           netParam.setActive(true); 
+           netParam.connectionStatus = 100;
+        }else{
+            netParam.setActive(false); 
+           netParam.connectionStatus = 200;
+        }
+        switch (interface.type())
+        {
+                case QNetworkInterface::Wifi:
+                    netParam.setType(NetworkInterfaceType::WLAN);
+                    break;
+                case QNetworkInterface::Ethernet:
+                    netParam.setType(NetworkInterfaceType::LAN);  
+                    break;
+                case QNetworkInterface::Virtual:
+                    netParam.setType(NetworkInterfaceType::OPENVPN);
+                    break;
+                default:
+                    netParam.setType(NetworkInterfaceType::OTHER);
+                    break;
+        } 
+        NetworkAddress IP4,IP6;
+         if(!interface.addressEntries().empty()){
+            if(interface.addressEntries().at(0).ip().protocol() == QAbstractSocket::IPv4Protocol)
+                IP4.ip = interface.addressEntries().at(0).ip().toString().toStdString();
+                if(netParam.isActive()){
+                    readDns(IP4.dns);
+                    IP4.gateway = IP4Gateway;
+                    IP6.gateway = IP6Gateway;
+                }                    
+            for(auto i:interface.addressEntries()){
+                if (i.ip().protocol() == QAbstractSocket::IPv6Protocol){
+                    IP6.ip = i.ip().toString().toStdString();
+                    if(netParam.isActive())
+                        readDns(IP6.dns);
+                }
+            }
+        }
+        string cmd = "curl https://my-ip.pantherx.org/";
+        IP4.extIp = UTILS::COMMAND::Execute(cmd.c_str());        
+        IP4.extIp.erase(std::remove(IP4.extIp.begin(), IP4.extIp.end(), '\n'), IP4.extIp.end());        
+        IP6.extIp = IP4.extIp;
+        
+        netParam.setIP4(IP4);
+        netParam.setIP6(IP6);
+
+        result.push_back(netParam);
+
+        }
+    }
+}
+
+
+// void SystemStats::networkParamsNmcliParser(vector<NetworkParam> &result){
+// string devCommand = "nmcli -m tabular --terse device";  
+// string line, found;
+// found = UTILS::COMMAND::Execute(devCommand.c_str());
+//     if(!found.empty())
+//     {
+//           istringstream stream{found};
+//         while (std::getline(stream, line)) {            
+//             vector<string> devices;
+//             stringSeprator(line, ":", devices);
+//             if(devices.at(0) != "lo"){
+//                 string netParamCommand ="nmcli --terse device show "+devices.at(0);
+//                 string res = UTILS::COMMAND::Execute(netParamCommand.c_str());
+//                 NetworkParam netParam;
+//                 if(!res.empty()){
+//                     netParam = deviceParamsParser(res, devices.at(0));
+//                     GLOG_INF("Device information parsed succsessfully.");
+//                 }else{
+//                     GLOG_ERR("nmcli command has no value");
+//                 } 
+//                 result.push_back(netParam);
+//             }
+//         }
+//     } 
+// }
 
 string SystemStats::exec(const char* cmd) {
     std::array<char, 128> buffer;
@@ -391,91 +500,91 @@ void SystemStats::stringSeprator(std::string source,std::string seprator,vector<
     resultList.push_back(source);
 }
 
-NetworkParam SystemStats::deviceParamsParser(std::string data, std::string device){
-    NetworkParam networkParam;
-    try
-    {            
-        NetworkAddress IP4;
-        NetworkAddress IP6;
-        size_t pos = 0;
-        string line;
-        istringstream stream{data};
-        while (std::getline(stream, line)) {
-            vector<string> params;
-            stringSeprator(line,":",params);
-            if(params.at(0).find("TYPE")!= string::npos){
-                if(params.at(1)== "wifi")
-                    networkParam.setType(NetworkInterfaceType::WLAN);
-                else if (params.at(1)== "ethernet") 
-                    networkParam.setType(NetworkInterfaceType::LAN);  
-                else if(params.at(1)== "tun")
-                    networkParam.setType(NetworkInterfaceType::OPENVPN);
-                else
-                    networkParam.setType(NetworkInterfaceType::OTHER);
+// NetworkParam SystemStats::deviceParamsParser(std::string data, std::string device){
+//     NetworkParam networkParam;
+//     try
+//     {            
+//         NetworkAddress IP4;
+//         NetworkAddress IP6;
+//         size_t pos = 0;
+//         string line;
+//         istringstream stream{data};
+//         while (std::getline(stream, line)) {
+//             vector<string> params;
+//             stringSeprator(line,":",params);
+//             if(params.at(0).find("TYPE")!= string::npos){
+//                 if(params.at(1)== "wifi")
+//                     networkParam.setType(NetworkInterfaceType::WLAN);
+//                 else if (params.at(1)== "ethernet") 
+//                     networkParam.setType(NetworkInterfaceType::LAN);  
+//                 else if(params.at(1)== "tun")
+//                     networkParam.setType(NetworkInterfaceType::OPENVPN);
+//                 else
+//                     networkParam.setType(NetworkInterfaceType::OTHER);
 
-            }else if(params.at(0).find("HWADDR")!= string::npos){
-                std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
-                string mac = UTILS::COMMAND::Execute(macCommand.c_str());
-                if(!mac.empty()){
-                    mac.erase(std::remove(mac.begin(), mac.end(), '\n'), mac.end());
-                    networkParam.setMac(mac);
-                }else{
-                    GLOG_WRN("mac parameter has no value");
-                }
+//             }else if(params.at(0).find("HWADDR")!= string::npos){
+//                 std::string macCommand = "nmcli --terse device show "+device+" | grep HWADDR | cut -f 2,3,4,5,6,7 -d \":\"";
+//                 string mac = UTILS::COMMAND::Execute(macCommand.c_str());
+//                 if(!mac.empty()){
+//                     mac.erase(std::remove(mac.begin(), mac.end(), '\n'), mac.end());
+//                     networkParam.setMac(mac);
+//                 }else{
+//                     GLOG_WRN("mac parameter has no value");
+//                 }
                 
-            }else if(params.at(0).find("STATE")!= string::npos){
-                if ((params.at(1).find("100"))!= string::npos) {
-                    networkParam.setActive(true);
-                    networkParam.connectionStatus = 100;
-                }
-                else{
-                    networkParam.setActive(false);
-                    networkParam.connectionStatus = 200;
-                }
-            }else if(params.at(0).find("CONNECTION")!= string::npos){
-                    networkParam.setName(params.at(1));
-            }else if(params.at(0).find("IP4.ADDRESS[1]")!= string::npos){
-                IP4.ip = params.at(1);
-            }else if(params.at(0).find("IP4.GATEWAY")!= string::npos){
-                IP4.gateway = params.at(1);
-            }else if(params.at(0).find("IP4.DNS")!= string::npos){
-                IP4.dns.push_back(params.at(1));
-            }else if(params.at(0).find("IP4.DNS")!= string::npos){
-                IP4.dns.push_back(params.at(1));
-            }                      
+//             }else if(params.at(0).find("STATE")!= string::npos){
+//                 if ((params.at(1).find("100"))!= string::npos) {
+//                     networkParam.setActive(true);
+//                     networkParam.connectionStatus = 100;
+//                 }
+//                 else{
+//                     networkParam.setActive(false);
+//                     networkParam.connectionStatus = 200;
+//                 }
+//             }else if(params.at(0).find("CONNECTION")!= string::npos){
+//                     networkParam.setName(params.at(1));
+//             }else if(params.at(0).find("IP4.ADDRESS[1]")!= string::npos){
+//                 IP4.ip = params.at(1);
+//             }else if(params.at(0).find("IP4.GATEWAY")!= string::npos){
+//                 IP4.gateway = params.at(1);
+//             }else if(params.at(0).find("IP4.DNS")!= string::npos){
+//                 IP4.dns.push_back(params.at(1));
+//             }else if(params.at(0).find("IP4.DNS")!= string::npos){
+//                 IP4.dns.push_back(params.at(1));
+//             }                      
 
-        }
-        string cmd = "curl https://my-ip.pantherx.org/";
-        IP4.extIp = UTILS::COMMAND::Execute(cmd.c_str());        
-        IP4.extIp.erase(std::remove(IP4.extIp.begin(), IP4.extIp.end(), '\n'), IP4.extIp.end());
-        networkParam.setIP4(IP4);
-        string addCmd = "nmcli --terse device show "+device+" | grep \"IP6.ADDRESS\\[1\\]\"  | cut -f 2,3,4,5,6,7 -d \":\"";
-        IP6.ip = UTILS::COMMAND::Execute(addCmd.c_str());
-        IP6.ip.erase(std::remove(IP6.ip.begin(), IP6.ip.end(), '\n'), IP6.ip.end());
-        addCmd = "nmcli --terse device show "+device+" | grep IP6.GATEWAY | cut -f 2,3,4,5,6,7,8 -d \":\"";
-        IP6.gateway = UTILS::COMMAND::Execute(addCmd.c_str());
-        IP6.gateway.erase(std::remove(IP6.gateway.begin(), IP6.gateway.end(), '\n'), IP6.gateway.end());
-        addCmd = "nmcli --terse device show "+device+" | grep IP6.DNS | cut -f 2,3,4,5,6,7 -d \":\"";
-        string dns = UTILS::COMMAND::Execute(addCmd.c_str());        
-        if(!dns.empty()){        
-            istringstream st{dns};
-            string li;
-            while (std::getline(st, li)) {
-                li.erase(std::remove(li.begin(), li.end(), '\n'), li.end());
-                IP6.dns.push_back(li);
-            }
-        }
-        IP6.extIp = IP4.extIp;
-        networkParam.setIP6(IP6);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-        GLOG_ERR("Could not retrieve information about network.");
-    }   
+//         }
+//         string cmd = "curl https://my-ip.pantherx.org/";
+//         IP4.extIp = UTILS::COMMAND::Execute(cmd.c_str());        
+//         IP4.extIp.erase(std::remove(IP4.extIp.begin(), IP4.extIp.end(), '\n'), IP4.extIp.end());
+//         networkParam.setIP4(IP4);
+//         string addCmd = "nmcli --terse device show "+device+" | grep \"IP6.ADDRESS\\[1\\]\"  | cut -f 2,3,4,5,6,7 -d \":\"";
+//         IP6.ip = UTILS::COMMAND::Execute(addCmd.c_str());
+//         IP6.ip.erase(std::remove(IP6.ip.begin(), IP6.ip.end(), '\n'), IP6.ip.end());
+//         addCmd = "nmcli --terse device show "+device+" | grep IP6.GATEWAY | cut -f 2,3,4,5,6,7,8 -d \":\"";
+//         IP6.gateway = UTILS::COMMAND::Execute(addCmd.c_str());
+//         IP6.gateway.erase(std::remove(IP6.gateway.begin(), IP6.gateway.end(), '\n'), IP6.gateway.end());
+//         addCmd = "nmcli --terse device show "+device+" | grep IP6.DNS | cut -f 2,3,4,5,6,7 -d \":\"";
+//         string dns = UTILS::COMMAND::Execute(addCmd.c_str());        
+//         if(!dns.empty()){        
+//             istringstream st{dns};
+//             string li;
+//             while (std::getline(st, li)) {
+//                 li.erase(std::remove(li.begin(), li.end(), '\n'), li.end());
+//                 IP6.dns.push_back(li);
+//             }
+//         }
+//         IP6.extIp = IP4.extIp;
+//         networkParam.setIP6(IP6);
+//     }
+//     catch(const std::exception& e)
+//     {
+//         std::cerr << e.what() << '\n';
+//         GLOG_ERR("Could not retrieve information about network.");
+//     }   
 
-    return networkParam;
-}
+//     return networkParam;
+// }
 
 vector<InstalledApplication> SystemStats::getApplications(){
    vector<InstalledApplication> applicationList;
@@ -500,3 +609,16 @@ vector<InstalledApplication> SystemStats::getApplications(){
     } 
     return applicationList;
 }
+
+   #include "resolv.h"
+    #include <arpa/inet.h>
+void SystemStats::readDns(vector<std::string> & allDns){
+    res_init();
+    char dns[20];
+    auto dnsList =     _res.nsaddr_list;
+    for(int i = 0; i < MAXNS; i++){
+        inet_ntop(AF_INET, &(_res.nsaddr_list[i].sin_addr), dns, 20);
+        allDns.push_back(dns);
+    }
+}
+    
