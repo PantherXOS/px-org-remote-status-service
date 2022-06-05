@@ -1,3 +1,5 @@
+# PantherX Organization Remote Status Service
+
 In order to gain better insights in device usage and utilization, and receive alerts when certain thresholds are reached, we continuously monitor all clients. Some of the stats we track include:
 
 - CPU Usage
@@ -8,7 +10,8 @@ In order to gain better insights in device usage and utilization, and receive al
 - Errors
 - Breech (system files modified)
 
-### Overview
+## Overview
+
 ```mermaid
 graph TD
 subgraph client
@@ -34,6 +37,7 @@ A-.->|response|B
 ```
 
 _Notes_
+
 - `px-org-remote-status-service` is C/C++ based
 - We rely on [Monit](https://mmonit.com/monit/) for monitoring   
 - `px-org-remote-status-service` basically "forwards" (read or receive from `monit`) the data   
@@ -45,6 +49,7 @@ _Notes_
 - Events should be stored, if they fail to send.
 
 ### `monit` query response example
+
 ```
 System 'fakhri-VirtualBox'
   status                       OK
@@ -61,6 +66,32 @@ System 'fakhri-VirtualBox'
 ```
 
 ### `monit` configuration event example
+
 ```
 if cpu usage > 95% for 10 cycles then exec "/my/script"
+```
+
+## Build
+
+### Build restclient-cpp
+
+```bash
+sudo apt install automake libtool -y
+git clone https://github.com/mrtazz/restclient-cpp.git
+cd restclient-cpp
+./autogen.sh
+./configure
+sudo make install
+```
+
+### Build px-org-remote-status-service
+
+```bash
+git clone https://git.pantherx.org/development/applications/px-org-remote-status-service.git
+cd px-org-remote-status-service
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
 ```
