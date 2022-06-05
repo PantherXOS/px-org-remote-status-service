@@ -73,10 +73,11 @@ if cpu usage > 95% for 10 cycles then exec "/my/script"
 
 ## Build
 
+- Install `Monit`
+
 ### Build restclient-cpp
 
 ```bash
-sudo apt install automake libtool -y
 git clone https://github.com/mrtazz/restclient-cpp.git
 cd restclient-cpp
 ./autogen.sh
