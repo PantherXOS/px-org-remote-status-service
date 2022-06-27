@@ -133,3 +133,19 @@ string UTILS::PATH::getExecPath(){
     free(arg1);
     return ret;
 }
+
+const std::string WHITESPACE = " \n\r\t\f\v";
+
+std::string UTILS::STRING::ltrim(const std::string &value) {
+    auto start = value.find_first_not_of(WHITESPACE);
+    return (start == string::npos) ? "" : value.substr(start);
+}
+
+std::string UTILS::STRING::rtrim(const std::string &value) {
+    auto end = value.find_last_not_of(WHITESPACE);
+    return (end == string::npos) ? "" : value.substr(0, end + 1);;
+}
+
+std::string UTILS::STRING::trim(const std::string &value) {
+    return ltrim(rtrim(value));
+}

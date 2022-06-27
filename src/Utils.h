@@ -62,6 +62,13 @@ namespace UTILS {
         string getExecPath();
     }
 
+    namespace STRING
+    {
+        std::string ltrim(const std::string& value);
+        std::string rtrim(const std::string& value);
+        std::string trim(const std::string& value);        
+    }
+
 }
 
 

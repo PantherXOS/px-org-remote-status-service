@@ -3,17 +3,21 @@
 //
 
 #include "InstalledApplication.h"
+#include "Utils.h"
 
 void InstalledApplication::setName(string name){
-    this->name = name;
+    auto trimmed_name = UTILS::STRING::trim(name);
+    this->name = trimmed_name;
 }
 
 void InstalledApplication::setVersion(string version){
-    this->version = version;
+    auto trimmed_version = UTILS::STRING::trim(version);
+    this->version = trimmed_version;
 }
 
 void InstalledApplication::setStoreLocation(string storeLocation){
-    this->storeLocation = storeLocation;
+    auto trimmed_location = UTILS::STRING::trim(storeLocation);
+    this->storeLocation = trimmed_location;
 }
 
 
