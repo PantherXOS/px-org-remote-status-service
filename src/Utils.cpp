@@ -8,6 +8,10 @@ int    UTILS::DATETIME::ConvertToTimeStamp(string datetime){
     time_t unixtime;
     strptime(datetime.c_str(),"%a, %e %h %Y %H:%M:%S %z",&tm);
     unixtime = mktime(&tm);
+    // ignore invalid timestamps and send '0' instead (#34)
+    if (unixtime < 0) {
+        unixtime = 0;
+    }
     return unixtime;
 }
 
