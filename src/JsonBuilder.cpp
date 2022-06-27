@@ -226,7 +226,7 @@ StringBuffer JsonBuilder::allStatus(StatsParam statsParam,vector<InstalledApplic
        //Network.AddMember(" ",networks, alloc);
     }
 
-    document.AddMember("boot_time", statsParam.generalParams.getBootTime(), allocator);
+    document.AddMember("bootTime", statsParam.generalParams.getBootTime(), allocator);
     document.AddMember("firmware", "TODO", allocator);
     document.AddMember("network", networks, allocator);
     document.AddMember("hardware", Hardware, allocator);
