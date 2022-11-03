@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 #include <DeviceConfig.h>
-#include <DeviceIdentityClient.h>
+#include <px-auth-lib-cpp/DeviceIdentityClient/DeviceIdentityClient.h>
 #include <restclient-cpp/restclient.h>
 #include <restclient-cpp/connection.h>
 #include "Logger.h"
@@ -22,9 +22,11 @@ private:
 
 public:
     static IdPClient& Instance();
+    
+    PX::AUTH::AccessToken token() const;
+    bool updateToken();
 
 protected:
-    bool updateToken();
     RestClient::Response post(const string& path, const string& data, const map<string, string>& headers = map<string, string>());
 
 public:
@@ -32,7 +34,8 @@ public:
     bool submitEvent(const string& event);
 
 protected:
-    AccessToken _token;
+    PX::AUTH::DeviceIdentityClient _identityClient;
+    PX::AUTH::AccessToken _token;
     DeviceConfig _config;
 };
 

@@ -4,6 +4,8 @@ project(px-org-remote-status-service)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS -pthread)
 
+option(WITH_TESTS "Enable Tests" OFF)
+
 find_package(yaml-cpp REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
@@ -55,7 +57,6 @@ FILE(GLOB StatsSources
         src/NetworkAddress.h)
 
 FILE(GLOB ApiSources
-        src/DeviceIdentityClient.cpp
         src/IdPClient.cpp)
 
 FILE(GLOB DBSources
@@ -76,7 +77,7 @@ set(HEADER_SEARCH_PATHS ${PROJECT_INCLUDE_DIR} ${RESTCLIENTCPP_INCLUDE_DIR})
 set(RESTCLIENT_LIBRARY "librestclient-cpp.a")
 set(LIBRARIES_SEARCH_PATHS ${RESTCLIENT_LIBRARY} )
 include_directories(${HEADER_SEARCH_PATHS})
-target_link_libraries(px-org-remote-status-service  ${QT5_LIBRARIES}  CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl pthread)
+target_link_libraries(px-org-remote-status-service  ${QT5_LIBRARIES}  CapnProto::capnp-rpc SQLiteCpp sqlite3 dl yaml-cpp restclient-cpp curl px-auth-lib-cpp pthread)
 install(TARGETS px-org-remote-status-service DESTINATION bin)
 install(FILES monitrc PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE DESTINATION bin)
 
@@ -95,3 +96,22 @@ install(TARGETS px-org-remote-status-service-event-action DESTINATION bin)
 
 #add_executable(Test_RestClient test/Test_RestClient.cpp ${ApiSources})
 #target_link_libraries(Test_RestClient ${LIBRARIES_SEARCH_PATHS} pthread curl)
+
+
+IF (WITH_TESTS)
+        enable_testing()
+        set(CMAKE_AUTOMOC ON)
+        find_package(Qt5Test REQUIRED)
+
+        add_executable(TEST_IDPCLIENT 
+                test/Test_IdpClient.cpp
+                src/DeviceConfig.cpp
+                src/Logger.cpp
+                src/IdPClient.cpp)
+        target_link_libraries(TEST_IDPCLIENT 
+                Qt5::Test
+                yaml-cpp
+                restclient-cpp curl px-auth-lib-cpp pthread)
+        add_test(IdpClientTests TEST_IDPCLIENT)
+
+ENDIF(WITH_TESTS)

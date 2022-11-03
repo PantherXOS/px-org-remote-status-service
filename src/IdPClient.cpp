@@ -20,9 +20,13 @@ IdPClient& IdPClient::Instance() {
     return instance;
 }
 
+PX::AUTH::AccessToken IdPClient::token() const {
+    return _token;
+}
+
 bool IdPClient::updateToken() {
     try {
-        this->_token = DeviceIdentityClient::Instance().getAccessToken();
+        this->_token = _identityClient.getAccessToken();
     } catch(std::runtime_error* err) {
         GLOG_WRN ("ERROR: Could not refresh device access token: " + string(err->what()));
         return false;
@@ -38,7 +42,7 @@ RestClient::Response IdPClient::post(const string& path, const string& data, con
     conn.SetTimeout(5);
     RestClient::HeaderFields requestHeaders; 
     requestHeaders["content-type"] = "application/json";
-    requestHeaders["authorization"] = "Bearer " + _token.token;
+    requestHeaders["authorization"] = "Bearer " + _token.token.toStdString();
     for (const auto& kv : headers) {
         requestHeaders[kv.first] = kv.second;
     }

@@ -148,9 +148,6 @@ Logger::Logger(const string &title, LogTarget target, LogLevel lvl) :
  * delete allocated LogEngine from memory
  */
 Logger::~Logger() {
-    if (m_pLogEngine != nullptr) {
-        delete m_pLogEngine;
-    }
 }
 
 /**
